@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.goods.dao.mapper.SpecMapper">
+
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.Spec">
+        <id column="sp_id" property="spId" jdbcType="VARCHAR"/>
+        <result column="sp_name" property="spName" jdbcType="VARCHAR"/>
+        <result column="sp_format" property="spFormat" jdbcType="INTEGER"/>
+        <result column="sp_value" property="spValue" jdbcType="VARCHAR"/>
+        <result column="sp_sort" property="spSort" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap1" type="com.leimingtech.core.entity.vo.SpecVo">
+        <id column="sp_id" property="spId" jdbcType="VARCHAR"/>
+        <result column="sp_name" property="spName" jdbcType="INTEGER"/>
+        <result column="sp_format" property="spFormat" jdbcType="INTEGER"/>
+        <result column="sp_value" property="spValue" jdbcType="INTEGER"/>
+        <result column="sp_sort" property="spSort" jdbcType="INTEGER"/>
+        <collection property="specValueList" ofType="com.leimingtech.core.entity.base.SpecValue"
+                    column="sp_id" javaType="arraylist"
+                    select="com.leimingtech.service.module.goods.dao.mapper.SpecMapper.findListBySpId">
+        </collection>
+    </resultMap>
+
+    <resultMap id="SpecValueResultMap" type="com.leimingtech.core.entity.base.SpecValue">
+        <id column="sp_value_id" property="spValueId" jdbcType="VARCHAR"/>
+        <result column="sp_value_name" property="spValueName" jdbcType="VARCHAR"/>
+        <result column="sp_id" property="spId" jdbcType="VARCHAR"/>
+        <result column="sp_value_image" property="spValueImage" jdbcType="VARCHAR"/>
+        <result column="sp_value_sort" property="spValueSort" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        sp_id, sp_name, sp_format, sp_value, sp_sort
+    </sql>
+
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition.spName != null">
+                and sp_name like
+                <if test="dbName == 'oracle'">'%'||#{condition.spName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.spName}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%',#{condition.spName},'%')</if>
+            </if>
+            <if test="condition.spFormat != null">
+                and sp_format = #{condition.spFormat}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_spec where sp_id=#{spId}
+    </select>
+
+    <select id="findAllList" resultMap="BaseResultMap" parameterType="com.leimingtech.core.entity.base.Spec">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop_spec
+        order by sp_sort DESC
+    </select>
+
+    <select id="findPageList" resultMap="BaseResultMap" parameterType="com.leimingtech.service.utils.page.Pager">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop_spec
+        <include refid="whereStatement"/>
+        order by sp_sort DESC
+    </select>
+
+    <select id="findPageListCount" resultType="int" parameterType="com.leimingtech.service.utils.page.Pager">
+        select
+        count(*)
+        from shop_spec
+        <include refid="whereStatement"/>
+    </select>
+
+    <sql id="Base_Column_List_SpecValue">
+        sp_value_id, sp_value_name, sp_id, sp_value_image, sp_value_sort
+    </sql>
+
+    <select id="findListBySpId" resultMap="SpecValueResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List_SpecValue"/>
+        FROM shop_spec_value
+        where sp_id = #{spId}
+        order by sp_value_sort DESC
+    </select>
+
+    <select id="findSpecListBySpId" resultMap="BaseResultMap1" parameterType="java.lang.String">
+		select a.sp_id, a.sp_name, a.sp_format, a.sp_value, a.sp_sort from shop_spec a where a.sp_id=#{spId} 
+	</select>
+
+    <select id="findListByType" resultMap="BaseResultMap1" parameterType="java.lang.String">
+		select a.sp_id, a.sp_name, a.sp_format, a.sp_value, a.sp_sort from shop_spec a
+		join shop_type_spec b on a.sp_id=b.sp_id where b.type_id=#{typeId}
+	</select>
+
+    <delete id="deleteSpecBySpId" parameterType="java.lang.String">
+		delete from shop_spec where sp_id=#{spId}
+	</delete>
+
+    <delete id="deleteSpecValueBySpId" parameterType="java.lang.String">
+		delete from shop_spec_value where sp_id=#{spId}
+	</delete>
+
+    <insert id="save" parameterType="com.leimingtech.core.entity.base.Spec" keyProperty="spId"
+            keyColumn="sp_id">
+        INSERT INTO shop_spec(sp_id, sp_name, sp_format, sp_value, sp_sort)
+        VALUES(#{spId}, #{spName},#{spFormat,jdbcType=VARCHAR},#{spValue},#{spSort})
+    </insert>
+
+    <update id="update" parameterType="com.leimingtech.core.entity.base.Spec">
+        update shop_spec
+        <set>
+            <if test="spName != '' and spName != null">
+                sp_name = #{spName},
+            </if>
+            <if test="spFormat != null">
+                sp_format = #{spFormat},
+            </if>
+            <if test="spValue != '' and spValue != null">
+                sp_value = #{spValue},
+            </if>
+            <if test="spSort != null">
+                sp_sort = #{spSort}
+            </if>
+        </set>
+        where sp_id=#{spId}
+    </update>
+
+    <!--/**-->
+    <!--* 根据规格名获取规格数量-->
+    <!--* @param specName-->
+    <!--* @return-->
+    <!--*/-->
+    <select id="findSpecListByName" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT
+        COUNT(*)
+        FROM shop_spec
+        where sp_name = #{specName}
+    </select>
+</mapper>

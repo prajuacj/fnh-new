@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leimingtech.service.module.mianyourule.dao.mapper.MianyouRuleMapper">
+	
+	<resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.MianyouRule">
+		<result column="rule_id" property="ruleId" jdbcType="VARCHAR" />
+		<result column="mianyou_id" property="mianyouId" jdbcType="VARCHAR" />
+		<result column="mr_level" property="level" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="DECIMAL" />
+		<result column="shipping_free" property="shippingFree" jdbcType="INTEGER" />
+		<result column="discount" property="discount" jdbcType="DECIMAL" />
+		<result column="gift_name" property="giftName" jdbcType="VARCHAR" />
+		<result column="gift_link" property="giftLink" jdbcType="VARCHAR" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+		rule_id,
+		mianyou_id,
+		mr_level,
+		price,
+		shipping_free,
+		discount,
+		gift_name,
+		gift_link
+	</sql>
+	
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findMianyouRulePagerList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.service.utils.page.Pager">
+		
+		select * from shop_p_mianyou_rule
+		<include refid="whereStatement" />
+
+	</select>
+	
+	<select id="findMianyouRuleAllList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.core.entity.base.MianyouRule">
+		SELECT
+		<include refid="Base_Column_List" />
+		from shop_p_mianyou_rule
+	</select>
+	
+	<select id="findMianyouRuleByRuleId" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from shop_p_mianyou_rule c where rule_id = #{ruleId}
+
+	</select>
+	
+	<delete id="deleteMianyouRuleByRuleId" parameterType="java.lang.String">
+		delete from
+		shop_p_mianyou_rule where rule_id = #{ruleId}
+	</delete>
+	
+	<insert id="saveMianyouRule" parameterType="com.leimingtech.core.entity.base.MianyouRule"  useGeneratedKeys="true" keyProperty="ruleId">
+
+		insert into shop_p_mianyou_rule
+
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="ruleId != null ">
+			rule_id,
+			</if>
+			<if test="mianyouId != null ">
+			mianyou_id,
+			</if>
+			<if test="level != null ">
+			mr_level,
+			</if>
+			<if test="price != null ">
+			price,
+			</if>
+			<if test="shippingFree != null ">
+			shipping_free,
+			</if>
+			<if test="discount != null ">
+			discount,
+			</if>
+			<if test="giftName != null and giftName != ''">
+			gift_name,
+			</if>
+			<if test="giftLink != null and giftLink != ''">
+			gift_link,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="ruleId != null ">
+				#{ruleId},
+			</if>
+			<if test="mianyouId != null ">
+				#{mianyouId},
+			</if>
+			<if test="level != null ">
+				#{level},
+			</if>
+			<if test="price != null ">
+				#{price},
+			</if>
+			<if test="shippingFree != null ">
+				#{shippingFree},
+			</if>
+			<if test="discount != null ">
+				#{discount},
+			</if>
+			<if test="giftName != null and giftName != ''">
+				#{giftName},
+			</if>
+			<if test="giftLink != null and giftLink != ''">
+				#{giftLink},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateMianyouRule" parameterType="com.leimingtech.core.entity.base.MianyouRule">
+
+		update shop_p_mianyou_rule
+		<set>
+			<if test="ruleId != null ">
+				rule_id = #{ruleId},
+			</if>
+			<if test="mianyouId != null ">
+				mianyou_id = #{mianyouId},
+			</if>
+			<if test="level != null ">
+				mr_level = #{level},
+			</if>
+			<if test="price != null ">
+				price = #{price},
+			</if>
+			<if test="shippingFree != null ">
+				shipping_free = #{shippingFree},
+			</if>
+			<if test="discount != null ">
+				discount = #{discount},
+			</if>
+			<if test="giftName != null and giftName != ''">
+				gift_name = #{giftName},
+			</if>
+			<if test="giftLink != null and giftLink != ''">
+				gift_link = #{giftLink},
+			</if>
+		</set>
+
+		WHERE rule_id = #{ruleId}
+
+	</update>
+	
+	
+	<!-- 通过满免邮id获取满免邮的规则 -->
+	<select id="findMianyouRuleByMianyouId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from shop_p_mianyou_rule where mianyou_id = #{mianyouId} 
+		order by price asc
+	</select>
+	
+</mapper>

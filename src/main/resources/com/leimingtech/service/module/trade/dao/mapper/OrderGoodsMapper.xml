@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.trade.dao.mapper.OrderGoodsMapper">
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.OrderGoods">
+        <id column="rec_id" property="recId" jdbcType="VARCHAR"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="goods_id" property="goodsId" jdbcType="VARCHAR"/>
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="spec_id" property="specId" jdbcType="VARCHAR"/>
+        <result column="spec_info" property="specInfo" jdbcType="VARCHAR"/>
+        <result column="goods_price" property="goodsPrice" jdbcType="DECIMAL"/>
+        <result column="goods_num" property="goodsNum" jdbcType="INTEGER"/>
+        <result column="goods_image" property="goodsImage" jdbcType="VARCHAR"/>
+        <result column="stores_id" property="storeId" jdbcType="VARCHAR"/>
+        <result column="buyer_id" property="buyerId" jdbcType="VARCHAR"/>
+        <result column="goods_returnnum" property="goodsReturnNum" jdbcType="INTEGER"/>
+        <result column="evaluation_status" property="evaluationStatus" jdbcType="INTEGER"/>
+        <result column="evaluation_time" property="evaluationTime" jdbcType="BIGINT"/>
+        <result column="goods_pay_price" property="goodsPayPrice" jdbcType="DECIMAL"/>
+        <result column="goods_pre_amount" property="goodsPreAmount" jdbcType="DECIMAL"/>
+        <result column="commis_rate" property="commisRate" jdbcType="FLOAT"/>
+        <result column="gc_id" property="gcId" jdbcType="VARCHAR"/>
+        <result column="goods_barternum" property="goodsBarterNum" jdbcType="INTEGER"/>
+        <result column="refund_amount" property="refundAmount" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <!-- 物品订单信息 -->
+    <resultMap id="VoResultMap" type="com.leimingtech.core.entity.vo.OrderGoodsVo">
+        <result column="goods_id" property="goodsId" jdbcType="VARCHAR"/>
+        <result column="buyer_id" property="buyerId" jdbcType="VARCHAR"/>
+        <result column="buyer_name" property="buyerName" jdbcType="VARCHAR"/>
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="order_state" property="orderState" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="finnshed_time" property="finnshedTime" jdbcType="BIGINT"/>
+        <result column="spec_info" property="specInfo" jdbcType="VARCHAR"/>
+        <result column="gradename" property="gradename" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 物品订单信息 -->
+    <resultMap id="BaseResultMap2" type="com.leimingtech.core.entity.StoreGoodsSalCount">
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="goodssales" property="goodsSales" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="BaseResultByApi" type="com.leimingtech.core.entity.apibean.OrderGoodsApiBean">
+        <id column="rec_id" property="recId" jdbcType="VARCHAR" />
+        <result column="order_id" property="orderId" jdbcType="VARCHAR" />
+        <result column="goods_id" property="goodsId" jdbcType="VARCHAR" />
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+        <result column="spec_id" property="specId" jdbcType="VARCHAR" />
+        <result column="spec_info" property="specInfo" jdbcType="VARCHAR" />
+        <result column="goods_price" property="goodsPrice" jdbcType="DECIMAL" />
+        <result column="goods_num" property="goodsNum" jdbcType="INTEGER" />
+        <result column="goods_image" property="goodsImage" jdbcType="VARCHAR" />
+        <result column="stores_id" property="storeId" jdbcType="VARCHAR" />
+        <result column="buyer_id" property="buyerId" jdbcType="VARCHAR" />
+        <result column="goods_returnnum" property="goodsReturnNum" jdbcType="INTEGER" />
+        <result column="evaluation_status" property="evaluationStatus" jdbcType="INTEGER" />
+        <result column="goods_pay_price" property="goodsPayPrice" jdbcType="DECIMAL" />
+        <result column="goods_pre_amount" property="goodsPreAmount" jdbcType="DECIMAL" />
+        <result column="commis_rate" property="commisRate" jdbcType="FLOAT" />
+        <result column="gc_id" property="gcId" jdbcType="VARCHAR" />
+        <result column="goods_barternum" property="goodsBarterNum" jdbcType="INTEGER" />
+        <result column="refund_amount" property="refundAmount" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    rec_id, order_id, goods_id, goods_name, goods_price, goods_num, goods_image, spec_id, 
+    spec_info, goods_returnnum, stores_id, evaluation_status, evaluation_time, goods_pay_price,
+    goods_pre_amount, buyer_id, commis_rate, gc_id, goods_barternum, refund_amount
+  	</sql>
+
+    <!-- 插入订单项 -->
+    <insert id="saveOrderGoods" parameterType="com.leimingtech.core.entity.base.OrderGoods">
+  		insert into shop_order_goods(rec_id,order_id,goods_id,goods_name,goods_price,goods_num,goods_image,spec_id,
+    									spec_info, goods_returnnum, refund_amount, stores_id, goods_pay_price, goods_pre_amount, buyer_id, commis_rate, gc_id, goods_barternum) 
+    		values(#{recId},#{orderId},#{goodsId},#{goodsName},#{goodsPrice},#{goodsNum},#{goodsImage},
+    				#{specId},#{specInfo},#{goodsReturnNum},#{refundAmount},#{storeId},#{goodsPayPrice},#{goodsPreAmount},#{buyerId},#{commisRate},#{gcId},#{goodsBarterNum})
+  	</insert>
+
+    <!-- 修改订单项 -->
+    <update id="updateOrderGoods" parameterType="com.leimingtech.core.entity.base.OrderGoods">
+        update shop_order_goods
+        <set>
+            <if test="orderId != null and orderId != ''">
+                order_id = #{orderId},
+            </if>
+            <if test="goodsId != null and goodsId != ''">
+                goods_id = #{goodsId},
+            </if>
+            <if test="goodsName != null and goodsName != '' ">
+                goods_name = #{goodsName},
+            </if>
+            <if test="goodsPrice != null">
+                goods_price = #{goodsPrice},
+            </if>
+            <if test="goodsNum != null">
+                goods_num = #{goodsNum},
+            </if>
+            <if test="goodsImage != null and goodsImage != '' ">
+                goods_image = #{goodsImage},
+            </if>
+            <if test="specId != null and specId != ''">
+                spec_id = #{specId},
+            </if>
+            <if test="specInfo != null and specInfo != '' ">
+                spec_info = #{specInfo},
+            </if>
+            <if test="goodsReturnNum != null">
+                goods_returnnum = #{goodsReturnNum},
+            </if>
+            <if test="refundAmount != null">
+                refund_amount = #{refundAmount},
+            </if>
+            <if test="storeId != null and storeId != ''">
+                stores_id = #{storeId},
+            </if>
+            <if test="evaluationStatus != null ">
+                evaluation_status = #{evaluationStatus},
+            </if>
+            <if test="evaluationTime != null">
+                evaluation_time = #{evaluationTime},
+            </if>
+            <if test="goodsPayPrice != null ">
+                goods_pay_price = #{goodsPayPrice},
+            </if>
+            <if test="goodsPreAmount != null">
+                goods_pre_amount = #{goodsPreAmount},
+            </if>
+            <if test="buyerId != null and buyerId != ''">
+                buyer_id = #{buyerId},
+            </if>
+            <if test="commisRate != null">
+                commis_rate = #{commisRate},
+            </if>
+            <if test="gcId != null and gcId != ''">
+                gc_id = #{gcId},
+            </if>
+            <if test="goodsBarterNum != null">
+                goods_barternum = #{goodsBarterNum},
+            </if>
+        </set>
+        where rec_id = #{recId}
+    </update>
+
+    <!-- 根据订单id删除订单项 -->
+    <delete id="deleteByOrderId" parameterType="java.lang.String">
+  		delete from shop_order_goods where order_id = #{orderId}
+  	</delete>
+
+    <!-- 根据订单id查询订单项 -->
+    <select id="findByOrderId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_order_goods
+        where order_id = #{orderId}
+    </select>
+
+    <!-- 根据id查询订单项 -->
+    <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_order_goods
+        where rec_id = #{recId}
+    </select>
+
+    <!-- 根据物品id查询物品订单信息 -->
+    <select id="findOrderGoodsVoByGoodsId" parameterType="java.lang.String" resultMap="VoResultMap">
+		SELECT a.goods_id,b.buyer_id,b.buyer_name,a.goods_name,b.order_state,b.create_time,a.spec_info,
+		(SELECT grade_name FROM shop_member_grade WHERE grade_id=(SELECT member_gradeid FROM shop_member WHERE member_id =b.buyer_id) ) AS gradename,
+		b.finnshed_time from shop_order_goods a INNER JOIN shop_order b ON a.order_id = b.order_id 
+		where a.goods_id = #{goodsId} and b.order_state=40
+	</select>
+
+    <select id="findOrderGoodsDetail" parameterType="com.leimingtech.core.entity.base.OrderGoods"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_order_goods
+        where rec_id = #{recId}
+        <if test="buyerId != null and buyerId != ''">
+            and buyer_id = #{buyerId}
+        </if>
+        <if test="storeId != null and storeId != ''">
+            and stores_id = #{storeId}
+        </if>
+    </select>
+
+    <!--获取店铺下商品的成交量-->
+    <select id="storeDoodsSalCount" resultMap="BaseResultMap2" parameterType="map">
+	select sg.goods_name,goodssales from (select sog.goods_id,count(*) goodssales from shop_order_goods sog  left join
+		shop_order so on sog.order_id=so.order_id where 1=1
+		<if test="storeId != null and storeId != ''">
+			and sog.stores_id = #{storeId}
+		</if>
+		<if test="orderstate != null">
+			and so.order_state = #{orderstate}
+		</if>
+		<if test="endtime != null and endtime != '' ">
+			and so.create_time &lt; #{endtime}
+		</if>
+		<if test="starttime != null and starttime != '' ">
+			and so.create_time &gt;= #{starttime}
+		</if>
+		GROUP BY sog.goods_id ) a INNER join shop_goods sg on a.goods_id=sg.goods_id order by goodssales desc
+	</select>
+
+    <!--根据订单id查询订单项接口实体-->
+    <select id="findApiBeanByOrderId" parameterType="java.lang.String" resultMap="BaseResultByApi">
+        select <include refid="Base_Column_List" /> from shop_order_goods
+        where order_id = #{orderId}
+    </select>
+
+</mapper>

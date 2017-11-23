@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leimingtech.service.module.trade.dao.mapper.ShopBarterLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.ShopBarterLog">
+        <result column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="barter_id" property="barterId" jdbcType="VARCHAR"/>
+        <result column="barter_state" property="barterState" jdbcType="VARCHAR"/>
+        <result column="change_state" property="changeState" jdbcType="VARCHAR"/>
+        <result column="state_info" property="stateInfo" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="operator" property="operator" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		id,
+		barter_id,
+		barter_state,
+		change_state,
+		state_info,
+		create_time,
+		operator
+	</sql>
+
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition !=null">
+            </if>
+        </where>
+    </sql>
+
+    <select id="findShopBarterLogPagerList" resultMap="BaseResultMap"
+            parameterType="com.leimingtech.service.utils.page.Pager">
+        select * from shop_barter_log
+        <include refid="whereStatement"/>
+    </select>
+
+    <select id="findShopBarterLogAllList" resultMap="BaseResultMap"
+            parameterType="com.leimingtech.core.entity.base.ShopBarterLog">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from shop_barter_log
+    </select>
+
+    <select id="findShopBarterLogById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_barter_log c where id = #{id}
+    </select>
+
+    <delete id="deleteShopBarterLogById" parameterType="java.lang.String">
+		delete from
+		shop_barter_log where id = #{id}
+	</delete>
+
+    <insert id="saveShopBarterLog" parameterType="com.leimingtech.core.entity.base.ShopBarterLog" keyProperty="id">
+
+        insert into shop_barter_log
+
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                id,
+            </if>
+            <if test="barterId != null and barterId != ''">
+                barter_id,
+            </if>
+            <if test="barterState != null and barterState != ''">
+                barter_state,
+            </if>
+            <if test="changeState != null and changeState != ''">
+                change_state,
+            </if>
+            <if test="stateInfo != null and stateInfo != ''">
+                state_info,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="operator != null and operator != ''">
+                operator,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                #{id},
+            </if>
+            <if test="barterId != null and barterId != ''">
+                #{barterId},
+            </if>
+            <if test="barterState != null and barterState != ''">
+                #{barterState},
+            </if>
+            <if test="changeState != null and changeState != ''">
+                #{changeState},
+            </if>
+            <if test="stateInfo != null and stateInfo != ''">
+                #{stateInfo},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="operator != null and operator != ''">
+                #{operator},
+            </if>
+        </trim>
+
+    </insert>
+
+    <update id="updateShopBarterLog" parameterType="com.leimingtech.core.entity.base.ShopBarterLog">
+
+        update shop_barter_log
+        <set>
+            <if test="barterId != null and barterId != ''">
+                barter_id = #{barterId},
+            </if>
+            <if test="barterState != null and barterState != ''">
+                barter_state = #{barterState},
+            </if>
+            <if test="changeState != null and changeState != ''">
+                change_state = #{changeState},
+            </if>
+            <if test="stateInfo != null and stateInfo != ''">
+                state_info = #{stateInfo},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="operator != null and operator != ''">
+                operator = #{operator},
+            </if>
+        </set>
+
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据换货表id查询换货日志表信息 -->
+    <select id="findListByBatterId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_barter_log where barter_id =#{barterId} order by create_time desc
+    </select>
+
+</mapper>

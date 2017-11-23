@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leimingtech.service.module.mianyou.dao.mapper.MianYouMapper">
+	
+	<resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.MianYou">
+		<result column="mianyou_id" property="mianyouId" jdbcType="VARCHAR" />
+		<result column="mianyou_name" property="mianyouName" jdbcType="VARCHAR" />
+		<result column="start_time" property="startTime" jdbcType="BIGINT" />
+		<result column="end_time" property="endTime" jdbcType="BIGINT" />
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="store_id" property="storeId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="store_name" property="storeName" jdbcType="VARCHAR" />
+		<result column="state" property="state" jdbcType="INTEGER" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+		mianyou_id,
+		mianyou_name,
+		start_time,
+		end_time,
+		member_id,
+		store_id,
+		member_name,
+		store_name,
+		state,
+		remark
+	</sql>
+	
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			<if test="condition.mianyouId != null and condition.mianyouId != ''">
+				AND mianyou_id = #{condition.mianyouId}
+			</if>
+
+			<if test="condition.storeId != null ">
+				AND store_id = #{condition.storeId}
+			</if>
+			<if test="condition.mianyouName != null and condition.mianyouName != ''">
+				AND mianyou_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{condition.mianyouName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{condition.mianyouName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{condition.mianyouName},'%')</if>
+			</if>
+			<if test="condition.startTime != null and condition.startTime != ''">
+				AND start_time = #{condition.startTime}
+			</if>
+			<if test="condition.endTime != null and condition.endTime != ''">
+				AND end_time = #{condition.endTime}
+			</if>
+			<if test="condition.state != null and condition.state != ''">
+				AND state = #{condition.state}
+			</if>
+			<if test="condition.storeName != null and condition.storeName != ''">
+				AND store_name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{condition.storeName}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{condition.storeName}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{condition.storeName},'%')</if>
+			</if>
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findMianYouPagerList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.service.utils.page.Pager">
+		
+		select * from shop_p_mianyou
+		<include refid="whereStatement" />
+		
+	</select>
+	
+	<select id="findMianYouAllList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.core.entity.base.MianYou">
+		SELECT
+		<include refid="Base_Column_List" />
+		from shop_p_mianyou
+	</select>
+	
+	<select id="findMianYouByMianyouId" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from shop_p_mianyou c where mianyou_id = #{mianyouId}
+
+	</select>
+	
+	<delete id="deleteMianYouByMianyouId" parameterType="java.lang.String">
+		delete from
+		shop_p_mianyou where mianyou_id = #{mianyouId}
+	</delete>
+	
+	<insert id="saveMianYou" parameterType="com.leimingtech.core.entity.base.MianYou" >
+
+		insert into shop_p_mianyou
+
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="mianyouId != null and mianyouId != '' ">
+			mianyou_id,
+			</if>
+			<if test="mianyouName != null and mianyouName != ''">
+			mianyou_name,
+			</if>
+			<if test="startTime != null ">
+			start_time,
+			</if>
+			<if test="endTime != null ">
+			end_time,
+			</if>
+			<if test="memberId != null and memberId != '' ">
+			member_id,
+			</if>
+			<if test="storeId != null and storeId != '' ">
+			store_id,
+			</if>
+			<if test="memberName != null and memberName != ''">
+			member_name,
+			</if>
+			<if test="storeName != null and storeName != ''">
+			store_name,
+			</if>
+			<if test="state != null ">
+			state,
+			</if>
+			<if test="remark != null and remark != ''">
+			remark,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="mianyouId != null and mianyouId != '' ">
+				#{mianyouId},
+			</if>
+			<if test="mianyouName != null and mianyouName != ''">
+				#{mianyouName},
+			</if>
+			<if test="startTime != null ">
+				#{startTime},
+			</if>
+			<if test="endTime != null ">
+				#{endTime},
+			</if>
+			<if test="memberId != null and memberId != '' ">
+				#{memberId},
+			</if>
+			<if test="storeId != null and storeId != '' ">
+				#{storeId},
+			</if>
+			<if test="memberName != null and memberName != ''">
+				#{memberName},
+			</if>
+			<if test="storeName != null and storeName != ''">
+				#{storeName},
+			</if>
+			<if test="state != null ">
+				#{state},
+			</if>
+			<if test="remark != null and remark != ''">
+				#{remark},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateMianYou" parameterType="com.leimingtech.core.entity.base.MianYou">
+
+		update shop_p_mianyou
+		<set>
+			<if test="mianyouId != null and mianyouId != '' ">
+				mianyou_id = #{mianyouId},
+			</if>
+			<if test="mianyouName != null and mianyouName != ''">
+				mianyou_name = #{mianyouName},
+			</if>
+			<if test="startTime != null ">
+				start_time = #{startTime},
+			</if>
+			<if test="endTime != null ">
+				end_time = #{endTime},
+			</if>
+			<if test="memberId != null and memberId != '' ">
+				member_id = #{memberId},
+			</if>
+			<if test="storeId != null and storeId != '' ">
+				store_id = #{storeId},
+			</if>
+			<if test="memberName != null and memberName != ''">
+				member_name = #{memberName},
+			</if>
+			<if test="storeName != null and storeName != ''">
+				store_name = #{storeName},
+			</if>
+			<if test="state != null ">
+				state = #{state},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark = #{remark},
+			</if>
+		</set>
+		WHERE mianyou_id = #{mianyouId}
+	</update>
+
+	<select id="findByEndTimeCount" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+		SELECT COUNT(1) FROM shop_p_mianyou WHERE end_time &gt; #{endTime}  and store_id = #{storeId}
+	</select>
+
+	<select id="findStoreCurrentMianyou" parameterType="com.leimingtech.core.entity.base.MianYou" resultMap="BaseResultMap">
+		<if test="dbName == 'mysql'">
+			SELECT * FROM shop_p_mianyou WHERE state=2 and store_id=#{storeId} and end_time>#{endTime} order by end_time asc limit 1
+		</if>
+
+		<if test="dbName == 'mssql'">
+			SELECT top 1 * FROM shop_p_mianyou WHERE state=2 and store_id=#{storeId} and end_time>#{endTime} order by end_time asc
+		</if>
+
+		<if test="dbName == 'oracle'">
+			SELECT * FROM shop_p_mianyou WHERE state=2 and store_id=#{storeId} and end_time>#{endTime} AND rownum = 1 order by end_time asc
+		</if>
+	</select>
+	
+</mapper>

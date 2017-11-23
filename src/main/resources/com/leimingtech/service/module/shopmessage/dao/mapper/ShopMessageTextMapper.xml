@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leimingtech.service.module.shopmessage.dao.mapper.ShopMessageTextMapper">
+	
+	<resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.ShopMessageText">
+		<result column="text_id" property="textId" jdbcType="VARCHAR" />
+		<result column="shop_message" property="shopMessage" jdbcType="VARCHAR" />
+		<result column="message_title" property="messageTitle" jdbcType="VARCHAR" />
+		<result column="is_del" property="isDel" jdbcType="INTEGER" />
+		<result column="sendtime" property="sendtime" jdbcType="BIGINT" />
+		<result column="message_type" property="messageType" jdbcType="INTEGER" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+		text_id,
+		shop_message,
+		message_title,
+		is_del,
+		sendtime,
+		message_type
+	</sql>
+	
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			<if test="condition.messageTitle != null and condition.messageTitle != ''">
+				AND message_title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{condition.messageTitle}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{condition.messageTitle}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{condition.messageTitle},'%')</if>
+			</if>
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findShopMessageTextPagerList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.service.utils.page.Pager">
+		select * from shop_message_text
+		<include refid="whereStatement" />
+		order by sendtime DESC
+	</select>
+	
+	<select id="findShopMessageTextAllList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.core.entity.base.ShopMessageText">
+		SELECT
+		<include refid="Base_Column_List" />a
+		from shop_message_text
+	</select>
+	
+	<select id="findShopMessageTextByTextId" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+		select
+		<include refid="Base_Column_List" />
+		from shop_message_text c where text_id = #{textId}
+
+	</select>
+	
+	<delete id="deleteShopMessageTextByTextId" parameterType="java.lang.String">
+		delete from
+		shop_message_text where text_id = #{textId}
+	</delete>
+	
+	<insert id="saveShopMessageText" parameterType="com.leimingtech.core.entity.base.ShopMessageText">
+
+		insert into shop_message_text
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="textId != null and textId != ''">
+			text_id,
+			</if>
+			<if test="shopMessage != null and shopMessage != ''">
+			shop_message,
+			</if>
+			<if test="messageTitle != null and messageTitle != ''">
+			message_title,
+			</if>
+			<if test="isDel != null ">
+			is_del,
+			</if>
+			<if test="sendtime != null ">
+			sendtime,
+			</if>
+			<if test="messageType != null ">
+			message_type,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="textId != null and textId != ''">
+				#{textId},
+			</if>
+			<if test="shopMessage != null and shopMessage != ''">
+				#{shopMessage},
+			</if>
+			<if test="messageTitle != null and messageTitle != ''">
+				#{messageTitle},
+			</if>
+			<if test="isDel != null ">
+				#{isDel},
+			</if>
+			<if test="sendtime != null ">
+				#{sendtime},
+			</if>
+			<if test="messageType != null ">
+				#{messageType},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateShopMessageText" parameterType="com.leimingtech.core.entity.base.ShopMessageText">
+
+		update shop_message_text
+		<set>
+			<if test="textId != null and textId != ''">
+				text_id = #{textId},
+			</if>
+			<if test="shopMessage != null and shopMessage != ''">
+				shop_message = #{shopMessage},
+			</if>
+			<if test="messageTitle != null and messageTitle != ''">
+				message_title = #{messageTitle},
+			</if>
+			<if test="isDel != null ">
+				is_del = #{isDel},
+			</if>
+			<if test="sendtime != null ">
+				sendtime = #{sendtime},
+			</if>
+			<if test="messageType != null ">
+				message_type = #{messageType},
+			</if>
+		</set>
+
+		WHERE text_id = #{textId}
+
+	</update>
+	
+</mapper>

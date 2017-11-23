@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.submall.dao.mapper.SubMallGoodsClassMapper">
+	<resultMap id="SubGoodsClassMap" type="com.leimingtech.core.entity.vo.CategoryVo">
+		<result column="sg_id" property="id" jdbcType="VARCHAR" />
+		<result column="gcname" property="name" jdbcType="VARCHAR" />
+		<result column="gc_id" property="gcId" jdbcType="VARCHAR" />
+		<result column="sm_id" property="smId" jdbcType="VARCHAR" />
+		<result column="sm_type" property="smType" jdbcType="VARCHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="subtitle" property="subtitle" jdbcType="VARCHAR" />
+		<result column="imgurl" property="imgUrl" jdbcType="VARCHAR" />
+		<result column="logourl" property="logoUrl" jdbcType="VARCHAR" />
+        <collection property="subCategorys" ofType="com.leimingtech.core.entity.vo.SubCategoryVo"
+                    column="sg_id" javaType="arraylist"
+                    select="com.leimingtech.service.module.submall.dao.mapper.SubMallGoodsClassMapper.querySubCategoryBysgId">
+        </collection>
+        <collection property="areaCategorys" ofType="com.leimingtech.core.entity.vo.AreaCategoryVo"
+                    column="sg_id" javaType="arraylist"
+                    select="com.leimingtech.service.module.submall.dao.mapper.SubMallGoodsClassMapper.queryAreaCategoryBysgId">
+        </collection>
+	</resultMap>
+	
+	<resultMap id="BaseSubGoodsClassMap" type="com.leimingtech.core.entity.vo.CategoryVo">
+		<!-- type="com.leimingtech.core.entity.base.SubMallGoodsClass" -->
+		<result column="sg_id" property="id" jdbcType="VARCHAR" />
+		<result column="gcname" property="name" jdbcType="VARCHAR" />
+		<result column="gc_id" property="gcId" jdbcType="VARCHAR" />
+		<result column="sm_id" property="smId" jdbcType="VARCHAR" />
+		<result column="sm_type" property="smType" jdbcType="VARCHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="subtitle" property="subtitle" jdbcType="VARCHAR" />
+		<result column="imgurl" property="imgUrl" jdbcType="VARCHAR" />
+		<result column="logourl" property="logoUrl" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="SubMallGcSubClassRelationMap" type="com.leimingtech.core.entity.vo.SubCategoryVo">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="gcname" property="name" jdbcType="VARCHAR" />
+		<result column="sub_class" property="subClass" jdbcType="VARCHAR" />
+		<result column="sm_gc" property="smGc" jdbcType="VARCHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="sub_title" property="subTitle" jdbcType="VARCHAR" />
+		<result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+		<result column="img_logo" property="imgLogo" jdbcType="VARCHAR" />
+		<result column="desc" property="description" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<resultMap id="SubMallGcAreaRelationMap" type="com.leimingtech.core.entity.vo.AreaCategoryVo">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="district_code" property="districtCode" jdbcType="VARCHAR" />
+		<result column="districtallname" property="districtAllName" jdbcType="VARCHAR" />
+		<result column="sm_gc" property="smGcId" jdbcType="VARCHAR" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="sub_title" property="subTitle" jdbcType="VARCHAR" />
+		<result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+		<result column="logo_url" property="logoUrl" jdbcType="VARCHAR" />
+		<result column="desc" property="description" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<resultMap id="GoodsMap" type="com.leimingtech.core.entity.base.Goods">
+        <result column="goods_id" property="goodsId" jdbcType="VARCHAR"/>
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="goods_subtitle" property="goodsSubtitle" jdbcType="VARCHAR"/>
+        <result column="gc_id" property="gcId" jdbcType="VARCHAR"/>
+        <result column="gc_name" property="gcName" jdbcType="VARCHAR"/>
+        <result column="brand_id" property="brandId" jdbcType="VARCHAR"/>
+        <result column="brand_name" property="brandName" jdbcType="VARCHAR"/>
+        <result column="type_id" property="typeId" jdbcType="VARCHAR"/>
+        <result column="store_id" property="storeId" jdbcType="VARCHAR"/>
+        <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
+        <result column="spec_open" property="specOpen" jdbcType="INTEGER"/>
+        <result column="spec_id" property="specId" jdbcType="VARCHAR"/>
+        <result column="spec_name" property="specName" jdbcType="VARCHAR"/>
+        <result column="goods_image" property="goodsImage" jdbcType="VARCHAR"/>
+        <result column="goods_image_more" property="goodsImageMore" jdbcType="VARCHAR"/>
+        <result column="goods_store_price" property="goodsStorePrice" jdbcType="DECIMAL"/>
+        <result column="goods_serial" property="goodsSerial" jdbcType="VARCHAR"/>
+        <result column="goods_show" property="goodsShow" jdbcType="INTEGER"/>
+        <result column="goods_click" property="goodsClick" jdbcType="INTEGER"/>
+        <result column="goods_state" property="goodsState" jdbcType="INTEGER"/>
+        <result column="goods_commend" property="goodsCommend" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="goods_keywords" property="goodsKeywords" jdbcType="VARCHAR"/>
+        <result column="goods_description" property="goodsDescription" jdbcType="VARCHAR"/>
+        <result column="goods_body" property="goodsBody" jdbcType="VARCHAR"/>
+        <result column="goods_attr" property="goodsAttr" jdbcType="VARCHAR"/>
+        <result column="goods_spec" property="goodsSpec" jdbcType="VARCHAR"/>
+        <result column="goods_col_img" property="goodsColImg" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+        <result column="goods_form" property="goodsForm" jdbcType="INTEGER"/>
+        <result column="transport_id" property="transportId" jdbcType="VARCHAR"/>
+        <result column="py_price" property="pyPrice" jdbcType="DECIMAL"/>
+        <result column="kd_price" property="kdPrice" jdbcType="DECIMAL"/>
+        <result column="es_price" property="esPrice" jdbcType="DECIMAL"/>
+        <result column="city_id" property="cityId" jdbcType="VARCHAR"/>
+        <result column="city_name" property="cityName" jdbcType="VARCHAR"/>
+        <result column="province_id" property="provinceId" jdbcType="VARCHAR"/>
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR"/>
+        <result column="goods_close_reason" property="goodsCloseReason" jdbcType="VARCHAR"/>
+        <result column="goods_store_state" property="goodsStoreState" jdbcType="INTEGER"/>
+        <result column="commentnum" property="commentnum" jdbcType="INTEGER"/>
+        <result column="salenum" property="salenum" jdbcType="INTEGER"/>
+        <result column="goods_collect" property="goodsCollect" jdbcType="INTEGER"/>
+        <result column="goods_transfee_charge" property="goodsTransfeeCharge" jdbcType="INTEGER"/>
+        <result column="store_class_id" property="storeClassId" jdbcType="VARCHAR"/>
+        <result column="goods_market_price" property="goodsMarketPrice" jdbcType="DECIMAL"/>
+        <result column="goods_cost_price" property="goodCostPrice" jdbcType="DECIMAL"/>
+        <result column="static_url" property="staticurl" jdbcType="VARCHAR"/>
+        <result column="dynameic_url" property="dynameicurl" jdbcType="VARCHAR"/>
+        <result column="real_url" property="realurl" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap id="GoodsClassMap" type="com.leimingtech.core.entity.GoodsClass">
+        <id column="gc_id" property="gcId" jdbcType="VARCHAR" />
+        <result column="gc_name" property="gcName" jdbcType="VARCHAR" />
+        <result column="gc_pic" property="gcpic" jdbcType="VARCHAR" />
+        <result column="type_id" property="typeId" jdbcType="VARCHAR" />
+        <result column="type_name" property="typename" jdbcType="VARCHAR" />
+        <result column="gc_parent_id" property="gcParentId" jdbcType="VARCHAR" />
+        <result column="gc_sort" property="gcSort" jdbcType="INTEGER" />
+        <result column="gc_show" property="gcshow" jdbcType="INTEGER" />
+        <result column="gc_title" property="gcTitle" jdbcType="VARCHAR" />
+        <result column="gc_keywords" property="gcKeywords" jdbcType="VARCHAR" />
+        <result column="gc_description" property="gcDescription" jdbcType="VARCHAR" />
+        <result column="gc_idpath" property="gcIdpath" jdbcType="VARCHAR" />
+        <result column="has_child" property="hasChild" jdbcType="INTEGER" />
+        <result column="expen_scale" property="expenScale" jdbcType="FLOAT" />
+        <result column="is_relate" property="isRelate" jdbcType="INTEGER" />
+    </resultMap>
+    
+    <resultMap id="SubMallMap" type="com.leimingtech.core.entity.base.SubMall">
+    	<id column="submall_id" property="id" jdbcType="VARCHAR" />
+        <result column="submall_name" property="name" jdbcType="VARCHAR" />
+        <result column="submall_title" property="title" jdbcType="VARCHAR" />
+        <result column="submall_subtitle" property="subTitle" jdbcType="VARCHAR" />
+        <result column="submall_desc" property="description" jdbcType="VARCHAR" />
+        <result column="submall_img" property="img" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <select id="querySubMallByPager" parameterType="com.leimingtech.service.utils.page.Pager" resultMap="SubMallMap">
+    	SELECT 
+		  submall_id,
+		  submall_name,
+		  submall_title,
+		  submall_subtitle,
+		  submall_desc,
+		  submall_img,
+		  create_time 
+		FROM
+		  shop_submall
+    </select>
+    
+    <insert id="insertSubMallGoodsClass" parameterType="com.leimingtech.core.entity.base.SubMallGoodsClass">
+    	INSERT INTO shop_submall_goodsclass (
+		  sg_id,
+		  gc_id,
+		  sm_id,
+		  sm_type,
+		  title,
+		  subtitle,
+		  imgUrl,
+		  logoUrl
+		) 
+		VALUES
+		  (
+		    #{id},
+		    #{gcId},
+		    #{smId},
+		    #{smType},
+		    #{title},
+		    #{subtitle},
+		    #{imgUrl},
+		    #{logoUrl}
+		  )
+    </insert>
+    
+    <delete id="deleteById" parameterType="string">
+    	delete from shop_submall_goodsclass where sg_id = #{smGcId}
+    </delete>
+    
+    <delete id="deleteSubCategoryBySmGcId" parameterType="string">
+    	delete from shop_submall_gc_subclass_relation where sm_gc = #{smGcId}
+    </delete>
+    
+    <delete id="deleteAreaCategoryBySmGcId" parameterType="string">
+    	delete from shop_submall_gc_area_relation where sm_gc = #{smGcId}
+    </delete>
+    
+    <delete id="deleteSubCategoryById" parameterType="string">
+    	delete from shop_submall_gc_subclass_relation where id = #{id}
+    </delete>
+    
+    <insert id="saveSubCategory" parameterType="com.leimingtech.core.entity.base.SubMallGcSubClassRelation">
+		INSERT INTO `shop_submall_gc_subclass_relation` (
+		  `sub_class`,
+		  `sm_gc`,
+		  `title`,
+		  `sub_title`,
+		  `img_url`,
+		  `img_logo`,
+		  `desc`,
+		  `create_time`
+		) 
+		VALUES
+		  (
+		    #{subClass},
+		    #{smGc},
+		    #{title},
+		    #{subTitle},
+		    #{imgUrl},
+		    #{imgLogo},
+		    #{description},
+		    NOW()
+		  )
+    </insert>
+    
+    <select id="queryGoodsClassNoInSubMall" parameterType="string" resultMap="GoodsClassMap">
+    	select gc.gc_id,gc.gc_name,gc.type_id,gc.type_name,gc.gc_parent_id,gc.gc_sort,gc.gc_title,gc.gc_keywords,
+        gc.gc_description,gc.gc_show,gc.gc_pic,gc.gc_idpath,gc.expen_scale,gc.is_relate
+        from shop_goods_class gc
+        where gc.gc_show = 1
+        and gc.gc_parent_id = '0'
+        and NOT EXISTS(select 1 from shop_submall_goodsclass ssg where ssg.sm_id = #{subMallId} and ssg.gc_id = gc.gc_id)     
+    </select>
+    
+    <select id="queryGoodsClassNoInSubGoodsClass" parameterType="string" resultMap="GoodsClassMap">
+    	select gc.gc_id,gc.gc_name,gc.type_id,gc.type_name,gc.gc_parent_id,gc.gc_sort,gc.gc_title,gc.gc_keywords,
+        gc.gc_description,gc.gc_show,gc.gc_pic,gc.gc_idpath,gc.expen_scale,gc.is_relate
+        from shop_goods_class gc
+        where gc.gc_show = 1
+        and gc.gc_parent_id = (select ssg.gc_id from shop_submall_goodsclass ssg where ssg.sg_id = #{smGcId})
+        and NOT EXISTS(select 1 from shop_submall_gc_subclass_relation ssgsr where ssgsr.sm_gc = #{smGcId})
+    </select>
+    
+	<select id="queryBySubMallId" parameterType="string" resultMap="SubGoodsClassMap">
+		select ssg.sg_id,sg.gc_name gcname,ssg.gc_id,ssg.sm_id,ssg.sm_type,ssg.title,ssg.subtitle,ssg.imgurl,ssg.logourl
+		from shop_submall_goodsclass ssg
+		left join shop_goods_class sg
+		on ssg.gc_id = sg.gc_id
+		where ssg.sm_id = #{smId}
+	</select>
+	
+	<select id="queryByPager" parameterType="com.leimingtech.service.utils.page.Pager" resultMap="BaseSubGoodsClassMap">
+		select ssg.sg_id,sg.gc_name gcname,ssg.gc_id,ssg.sm_id,ssg.sm_type,ssg.title,ssg.subtitle,ssg.imgurl,ssg.logourl
+		from shop_submall_goodsclass ssg
+		left join shop_goods_class sg
+		on ssg.gc_id = sg.gc_id
+		<where>
+			1 = 1
+			<if test='condition.smId != null and condition.smId != ""'>
+				AND ssg.sm_id = #{condition.smId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryById" parameterType="string" resultMap="SubGoodsClassMap">
+		select ssg.sg_id,sg.gc_name gcname,ssg.gc_id,ssg.sm_id,ssg.sm_type,ssg.title,ssg.subtitle,ssg.imgurl,ssg.logourl
+		from shop_submall_goodsclass ssg
+		left join shop_goods_class sg
+		on ssg.gc_id = sg.gc_id
+		where ssg.sg_id = #{id}
+	</select>
+	
+	<select id="querySubCategoryBysgId" parameterType="string" resultMap="SubMallGcSubClassRelationMap">
+		select ssgsr.id,ssgsr.sub_class,sg.gc_name gcname,ssgsr.sm_gc,ssgsr.title,ssgsr.sub_title,ssgsr.img_url,ssgsr.img_logo,ssgsr.desc,ssgsr.create_time 
+		from shop_submall_gc_subclass_relation ssgsr
+		left join shop_goods_class sg
+		on ssgsr.sub_class = sg.gc_id
+		where ssgsr.sm_gc = #{smGcId}
+	</select>
+	
+	<select id="querySubCategoryByPager" parameterType="com.leimingtech.service.utils.page.Pager" resultMap="SubMallGcSubClassRelationMap">
+		select ssgsr.id,ssgsr.sub_class,sg.gc_name gcname,ssgsr.sm_gc,ssgsr.title,ssgsr.sub_title,ssgsr.img_url,ssgsr.img_logo,ssgsr.desc,ssgsr.create_time 
+		from shop_submall_gc_subclass_relation ssgsr
+		left join shop_goods_class sg
+		on ssgsr.sub_class = sg.gc_id
+		<where>
+			1 = 1
+			<if test='condition.smGc != null and condition.smGc != ""'>
+				AND ssgsr.sm_gc = #{condition.smGc}
+			</if>
+		</where>
+	</select>
+	
+	<select id="querySubCategoryById" parameterType="string" resultMap="SubMallGcSubClassRelationMap">
+		select ssgsr.id,ssgsr.sub_class,sg.gc_name gcname,ssgsr.sm_gc,ssgsr.title,ssgsr.sub_title,ssgsr.img_url,ssgsr.img_logo,ssgsr.desc,ssgsr.create_time 
+		from shop_submall_gc_subclass_relation ssgsr
+		left join shop_goods_class sg
+		on ssgsr.sub_class = sg.gc_id
+		where ssgsr.id = #{id}
+	</select>
+	
+	<select id="queryAreaCategoryBysgId" parameterType="string" resultMap="SubMallGcAreaRelationMap">
+		select ssgar.id,ssgar.district_code,replace(sd.allname,'-','') districtallname,ssgar.sm_gc ,ssgar.title,ssgar.sub_title,ssgar.img_url,ssgar.logo_url,ssgar.desc,ssgar.create_time
+		from shop_submall_gc_area_relation ssgar
+		left join sys_districts sd
+		on ssgar.district_code = sd.distircstsno
+		where ssgar.sm_gc = #{smGcId}
+	</select>
+	
+	<select id="queryAreaCategoryByPager" parameterType="com.leimingtech.service.utils.page.Pager" resultMap="SubMallGcAreaRelationMap">
+		select ssgar.id,ssgar.district_code,replace(sd.allname,'-','') districtallname,ssgar.sm_gc ,ssgar.title,ssgar.sub_title,ssgar.img_url,ssgar.logo_url,ssgar.desc,ssgar.create_time
+		from shop_submall_gc_area_relation ssgar
+		left join sys_districts sd
+		on ssgar.district_code = sd.distircstsno
+		<where>
+			1 = 1
+			<if test='condition.smGcId != null and condition.smGcId != ""'>
+				AND ssgar.sm_gc = #{condition.smGcId}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="saveArea" parameterType="com.leimingtech.core.entity.base.SubMallGcAreaRelation">
+		INSERT INTO `shop_submall_gc_area_relation` (
+		  `district_code`,
+		  `sm_gc`,
+		  `title`,
+		  `sub_title`,
+		  `img_url`,
+		  `logo_url`,
+		  `desc`,
+		  `create_time`
+		) 
+		VALUES
+		  (
+		    #{districtCode},
+		    #{smGcId},
+		    #{title},
+		    #{subTitle},
+		    #{imgUrl},
+		    #{logoUrl},
+		    #{description},
+		    NOW()
+		  )
+	</insert>
+	<delete id="deleteAreaById" parameterType="int">
+		delete from shop_submall_gc_area_relation where id = #{id}
+	</delete>
+	<select id="queryGoodsBySmGcId" parameterType="string" resultMap="GoodsMap">
+		SELECT 
+		  * 
+		FROM
+		  shop_goods sg 
+		WHERE sg.gc_id IN 
+		  (SELECT 
+		    sgc.gc_id 
+		  FROM
+		    shop_goods_class sgc 
+		  WHERE sgc.gc_parent_id = 
+		    (SELECT 
+		      ssg.gc_id 
+		    FROM
+		      shop_submall_goodsclass ssg 
+		    WHERE ssg.sg_id = #{id}))
+		 ORDER BY update_time desc
+	</select>
+	
+	<select id="queryGoodsByAreaCategoryId" parameterType="string" resultMap="GoodsMap">
+		SELECT 
+		  * 
+		FROM
+		  shop_goods sg 
+		WHERE sg.gc_id IN 
+		  (SELECT 
+		    sgc.gc_id 
+		  FROM
+		    shop_goods_class sgc 
+		  WHERE sgc.gc_parent_id = 
+		    (SELECT 
+		      ssg.gc_id 
+		    FROM
+		      shop_submall_gc_area_relation ssgar,
+		      shop_submall_goodsclass ssg 
+		    WHERE ssgar.sm_gc = ssg.sg_id
+		    	AND ssgar.id = #{id}))
+		    AND CONCAT(
+			    sg.city_id,
+			    '00'
+			  ) = 
+			  (SELECT 
+			    ssgar.district_code 
+			  FROM
+			    shop_submall_gc_area_relation ssgar 
+			  WHERE ssgar.id = #{id})
+			  <!-- 
+			AND sg.goods_state = 0 
+			AND sg.goods_store_state = 0 -->
+			ORDER BY update_time desc
+	</select>
+	
+	<select id="queryAreaCategoryById" parameterType="string" resultMap="SubMallGcAreaRelationMap">
+		select ssgar.id,ssgar.district_code,replace(sd.allname,'-','') districtallname,ssgar.sm_gc ,ssgar.title,ssgar.sub_title,ssgar.img_url,ssgar.logo_url,ssgar.desc,ssgar.create_time
+		from shop_submall_gc_area_relation ssgar
+		left join sys_districts sd
+		on ssgar.district_code = sd.distircstsno
+		where ssgar.id = #{id}
+	</select>
+	
+</mapper>

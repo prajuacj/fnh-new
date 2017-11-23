@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leimingtech.service.module.shopappserver.dao.mapper.ShopServerMapper">
+	
+	<resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.ShopServer">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="server_type" property="serverType" jdbcType="VARCHAR" />
+		<result column="server_name" property="serverName" jdbcType="VARCHAR" />
+		<result column="created_time" property="createdTime" jdbcType="VARCHAR" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+		id,
+		server_type,
+		server_name,
+		created_time
+	</sql>
+	
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			</if>
+		</where>
+	</sql>
+
+	<select id="findShopServerPagerList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.service.utils.page.Pager">
+		
+		select c.* from shop_server c
+		<include refid="whereStatement" />
+	</select>
+	
+	<select id="findShopServerAllList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.core.entity.base.ShopServer">
+		SELECT
+		<include refid="Base_Column_List" />
+		from shop_server c
+	</select>
+	
+	<select id="findShopServerById" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from shop_server c where id = #{id}
+
+	</select>
+	
+	<select id="findShopServerByType" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from shop_server c where server_type = #{serverType}
+
+	</select>
+	
+	<delete id="deleteShopServerById" parameterType="java.lang.String">
+		delete from
+		shop_server where id = #{id}
+	</delete>
+	
+	<insert id="saveShopServer" parameterType="com.leimingtech.core.entity.base.ShopServer" keyProperty="id">
+		insert into shop_server
+
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+			id,
+			</if>
+			<if test="serverType != null and serverType != ''">
+			server_type,
+			</if>
+			<if test="serverName != null and serverName != ''">
+			server_name,
+			</if>
+			<if test="createdTime != null and createdTime != ''">
+			created_time,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="id != null and id != ''">
+				#{id},
+			</if>
+			<if test="serverType != null and serverType != ''">
+				#{serverType},
+			</if>
+			<if test="serverName != null and serverName != ''">
+				#{serverName},
+			</if>
+			<if test="createdTime != null and createdTime != ''">
+				#{createdTime},
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateShopServer" parameterType="com.leimingtech.core.entity.base.ShopServer">
+		update shop_server
+		<set>
+			<if test="serverType != null and serverType != ''">
+				server_type = #{serverType},
+			</if>
+			<if test="serverName != null and serverName != ''">
+				server_name = #{serverName},
+			</if>
+			<if test="createdTime != null and createdTime != ''">
+				created_time = #{createdTime},
+			</if>
+		</set>
+
+		WHERE id = #{id}
+
+	</update>
+	
+</mapper>

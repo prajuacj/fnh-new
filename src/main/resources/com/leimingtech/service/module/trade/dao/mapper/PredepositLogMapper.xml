@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.trade.dao.mapper.PredepositLogMapper">
+	<resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.PredepositLog">
+		<id column="lg_id" property="lgId" jdbcType="VARCHAR" />
+		<result column="lg_member_id" property="lgMemberId" jdbcType="VARCHAR" />
+		<result column="lg_member_name" property="lgMemberName" jdbcType="VARCHAR" />
+		<result column="lg_admin_name" property="lgAdminName" jdbcType="VARCHAR" />
+		<result column="lg_type" property="lgType" jdbcType="VARCHAR" />
+		<result column="lg_av_amount" property="lgAvAmount" jdbcType="DECIMAL" />
+		<result column="lg_freeze_amount" property="lgFreezeAmount" jdbcType="DECIMAL" />
+		<result column="lg_add_amount" property="lgAddAmount" jdbcType="DECIMAL" />
+		<result column="lg_rde_amount" property="lgRdeAmount" jdbcType="DECIMAL" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="lg_desc" property="lgDesc" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 全部查询字段 -->
+	<sql id="Base_Column_List">
+		lg_id, lg_member_id, lg_member_name, lg_admin_name, lg_type, lg_av_amount, lg_freeze_amount,lg_add_amount,lg_rde_amount,
+		create_time, lg_desc
+	</sql>
+	
+	<!-- 保存预存款变更日志表 -->
+	<insert id="savePdl" parameterType="com.leimingtech.core.entity.base.PredepositLog">
+		insert into shop_pd_log 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="lgId != null and lgId != ''">
+				lg_id,
+			</if>
+			lg_member_id, lg_member_name, lg_type, lg_av_amount, lg_freeze_amount, create_time,lg_add_amount,lg_rde_amount,
+			<if test="lgAdminName != null and lgAdminName != '' ">
+				lg_admin_name,
+			</if>
+			<if test="lgDesc != null and lgDesc != '' ">
+				lg_desc,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="lgId != null and lgId != ''">
+				#{lgId},
+			</if>
+			#{lgMemberId}, #{lgMemberName}, #{lgType}, #{lgAvAmount}, #{lgFreezeAmount}, #{createTime},#{lgAddAmount},#{lgRdeAmount},
+			<if test="lgAdminName != null and lgAdminName != '' ">
+				#{lgAdminName},
+			</if>
+			<if test="lgDesc != null and lgDesc != '' ">
+				#{lgDesc},
+			</if>
+		</trim>
+	</insert>
+	
+	<!-- 修改预存款变更日志表 -->
+	<update id="updatePdl" parameterType="com.leimingtech.core.entity.base.PredepositLog">
+		update shop_pd_log
+		<set>
+			<if test="lgMemberId != null and lgMemberId != ''">
+				lg_member_id = #{lgMemberId},
+			</if>
+			<if test="lgMemberName != null and lgMemberName != ''">
+				lg_member_name = #{lgMemberName},
+			</if>
+			<if test="lgAdminName != null and lgAdminName!= '' ">
+				lg_admin_name = #{lgAdminName},
+			</if>
+			<if test="lgType != null and lgType != '' ">
+				lg_type = #{lgType},
+			</if>
+			<if test="lgAvAmount != null">
+				lg_av_amount = #{lgAvAmount},
+			</if>
+			<if test="lgFreezeAmount != null">
+				lg_freeze_amount = #{lgFreezeAmount},
+			</if>
+			<if test="lgAddAmount != null">
+				lg_add_amount = #{lgAddAmount},
+			</if>
+			<if test="lgRdeAmount != null">
+				lg_rde_amount = #{lgRdeAmount},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime},
+			</if>
+			<if test="lgDesc != null and lgDesc != '' ">
+				lg_desc = #{lgDesc},
+			</if>
+		</set>
+		where lg_id = #{lgId}
+	</update>
+	
+	<!-- 通过id删除预存款变更日志表 -->
+	<delete id="deletePdl" parameterType="java.lang.String">
+		delete from shop_pd_log where lg_id = #{lgId}
+	</delete>
+	
+	<!-- 通过id查找预存款变更日志表 -->
+	<select id="findPdlById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/> from shop_pd_log where lg_id = #{lgId}
+	</select>
+	
+	<!-- 根据用户id查询预存款变更日志表 -->
+	<select id="findByMemberId" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/> from shop_pd_log where lg_member_id = #{lgMemberId}
+	</select>
+	
+	<!-- 分页按条件查询预存款变更日志表 -->
+	<select id="findByPager"  resultMap="BaseResultMap"
+		parameterType="com.leimingtech.service.utils.page.Pager">
+		select 
+		<include refid="Base_Column_List"/> 
+		from shop_pd_log 
+		<if test="condition.lgMemberId != null and condition.lgMemberId != '' ">
+			where lg_member_id = #{condition.lgMemberId} 
+		</if>
+		<if test="condition.startTime != null and condition.startTime != '' ">
+			and create_time &gt;= #{condition.startTime} 
+		</if>
+		<if test="condition.endTime != null and condition.endTime != '' ">
+			and create_time &lt;= #{condition.endTime}
+		</if>
+		order by create_time desc
+	</select>
+</mapper>

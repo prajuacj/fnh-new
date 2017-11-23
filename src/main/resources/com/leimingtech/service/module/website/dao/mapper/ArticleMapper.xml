@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.website.dao.mapper.ArticleMapper">
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.Article">
+        <id column="article_id" property="articleId" jdbcType="VARCHAR"/>
+        <result column="ac_id" property="acId" jdbcType="VARCHAR"/>
+        <result column="article_url" property="articleUrl" jdbcType="VARCHAR"/>
+        <result column="article_show" property="articleShow" jdbcType="INTEGER"/>
+        <result column="article_sort" property="articleSort" jdbcType="INTEGER"/>
+        <result column="article_title" property="articleTitle" jdbcType="VARCHAR"/>
+        <result column="article_content" property="articleContent" jdbcType="VARCHAR"/>
+        <result column="article_time" property="articleTime" jdbcType="BIGINT"/>
+        <result column="is_del" property="isDel" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="static_url" property="staticUrl" jdbcType="VARCHAR" />
+        <result column="dynameic_url" property="dynameicUrl" jdbcType="VARCHAR" />
+        <result column="real_url" property="realUrl" jdbcType="VARCHAR" />
+        <association property="articleClass" column="ac_id" javaType="com.leimingtech.core.entity.ArticleClass"
+                     select="com.leimingtech.service.module.website.dao.mapper.ArticleClassMapper.findById"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap1" type="com.leimingtech.core.entity.base.Article">
+        <id column="article_id" property="articleId" jdbcType="VARCHAR"/>
+        <result column="ac_id" property="acId" jdbcType="VARCHAR"/>
+        <result column="article_url" property="articleUrl" jdbcType="VARCHAR"/>
+        <result column="article_show" property="articleShow" jdbcType="INTEGER"/>
+        <result column="article_sort" property="articleSort" jdbcType="INTEGER"/>
+        <result column="article_title" property="articleTitle" jdbcType="VARCHAR"/>
+        <result column="article_content" property="articleContent" jdbcType="VARCHAR"/>
+        <result column="article_time" property="articleTime" jdbcType="BIGINT"/>
+        <result column="is_del" property="isDel" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="static_url" property="staticUrl" jdbcType="VARCHAR" />
+        <result column="dynameic_url" property="dynameicUrl" jdbcType="VARCHAR" />
+        <result column="real_url" property="realUrl" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        article_id, ac_id,article_url, article_show, article_sort, article_title, article_content,article_time,is_del,create_time,update_time,static_url,dynameic_url,real_url
+    </sql>
+
+    <insert id="save" parameterType="com.leimingtech.core.entity.base.Article">
+        INSERT INTO shop_article(article_id,ac_id,article_url,article_show,article_sort,article_title,article_content,article_time,is_del,create_time)
+        VALUES(#{articleId},#{acId},#{articleUrl},#{articleShow},#{articleSort},#{articleTitle},#{articleContent},#{articleTime},0,#{createTime})
+    </insert>
+
+    <update id="update" parameterType="com.leimingtech.core.entity.base.Article">
+        update shop_article
+        <set>
+            <if test="acId!=null and acId!='' ">
+                ac_id = #{acId},
+            </if>
+            <if test="articleUrl!=null">
+                article_url = #{articleUrl},
+            </if>
+            <if test="articleShow!=null  ">
+                article_show = #{articleShow},
+            </if>
+            <if test="articleSort!=null and articleSort!='' ">
+                article_sort = #{articleSort},
+            </if>
+            <if test="articleTitle!=null and articleTitle!='' ">
+                article_title = #{articleTitle},
+            </if>
+            <if test="articleContent!=null">
+                article_content = #{articleContent},
+            </if>
+            <if test="articleTime!=null and articleTime!='' ">
+                article_time = #{articleTime},
+            </if>
+            <if test="updateTime!=null and updateTime!='' ">
+                update_time = #{updateTime},
+            </if>
+            <if test="dynameicUrl!=null and dynameicUrl!='' ">
+                dynameic_url = #{dynameicUrl},
+            </if>
+            <if test="staticUrl!=null and staticUrl!='' ">
+                static_url = #{staticUrl},
+            </if>
+            <if test="realUrl!=null and realUrl!='' ">
+                real_url = #{realUrl}
+            </if>
+        </set>
+        where article_id=#{articleId}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.String">
+        update shop_article set is_del = 1 where article_id=#{articleId}
+    </delete>
+
+    <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_article where article_id=#{articleId}
+    </select>
+
+    <select id="findList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop_article
+        where is_del = 0
+        order by article_sort DESC
+    </select>
+
+
+    <select id="findListByArticle" resultMap="BaseResultMap" parameterType="com.leimingtech.core.entity.base.Article">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop_article
+        where is_del = 0
+        <if test="articleShow!=null">
+            AND article_show = #{articleShow}
+        </if>
+        <if test="acId != null and acId != ''">
+            AND ac_id = #{acId}
+        </if>
+        <if test="createTime!=null">
+            AND create_time &gt;= #{createTime}
+        </if>
+        <if test="articleTitle !=null and articleTitle != ''">
+            AND s.article_title like
+            <if test="dbName == 'oracle'">'%'||#{articleTitle}||'%'</if>
+            <if test="dbName == 'mssql'">'%'+#{articleTitle}+'%'</if>
+            <if test="dbName == 'mysql'">concat('%',#{articleTitle},'%')</if>
+        </if>
+        order by article_sort DESC
+    </select>
+
+    <select id="findPageList" resultMap="BaseResultMap" parameterType="com.leimingtech.service.utils.page.Pager">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop_article s
+        where s.is_del = 0
+        <if test="condition.articleTitle !=null and condition.articleTitle != ''">
+            AND s.article_title like
+            <if test="condition.dbName == 'oracle'">'%'||#{condition.articleTitle}||'%'</if>
+            <if test="condition.dbName == 'mssql'">'%'+#{condition.articleTitle}+'%'</if>
+            <if test="condition.dbName == 'mysql'">concat('%',#{condition.articleTitle},'%')</if>
+        </if>
+        <if test="condition.acId != null and condition.acId !=0 and condition.acId !=''">
+            AND s.ac_id = #{condition.acId}
+        </if>
+        <if test="condition.createTime!=null and condition.createTime!=''">
+            AND create_time &gt;= #{condition.createTime}
+        </if>
+        <if test="condition.articleShow!=null and condition.articleShow!=''">
+            AND article_show = #{condition.articleShow}
+        </if>
+        order by article_sort asc
+    </select>
+
+    <select id="findCount" resultType="int" parameterType="com.leimingtech.core.entity.base.Article">
+        select count(*) from shop_article s where s.is_del = 0
+        <if test="articleTitle !=null and articleTitle != ''">
+            AND s.article_title like
+            <if test="dbName == 'oracle'">'%'||#{articleTitle}||'%'</if>
+            <if test="dbName == 'mssql'">'%'+#{articleTitle}+'%'</if>
+            <if test="dbName == 'mysql'">concat('%',#{articleTitle},'%')</if>
+        </if>
+        <if test="acId != '' and acId != null">
+            AND s.ac_id = #{acId}
+        </if>
+    </select>
+
+    <select id="findArticlePageList" resultMap="BaseResultMap"  parameterType="com.leimingtech.service.utils.page.Pager">
+        select * FROM shop_article where is_del = 0 and article_show=1
+    </select>
+
+    <select id="findArticleByClassId" resultMap="BaseResultMap1" parameterType="java.lang.String">
+        SELECT * FROM shop_article WHERE ac_id = #{acId} AND is_del = 0 and article_show=1
+    </select>
+
+    <select id="findArticleList" resultMap="BaseResultMap1" parameterType="com.leimingtech.core.entity.base.Article">
+        SELECT a.* FROM shop_article a
+        LEFT JOIN shop_article_class b on a.ac_id = b.ac_id
+        WHERE 1 = 1 and b.is_del = 0 and  a.is_del = 0
+        <if test="acId != null and acId != ''">
+            AND b.ac_id = #{acId}
+        </if>
+        <if test="acName != null and acName != ''">
+            AND b.ac_name = #{acName}
+        </if>
+    </select>
+
+</mapper>

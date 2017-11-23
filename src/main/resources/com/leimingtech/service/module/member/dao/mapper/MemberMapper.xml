@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.member.dao.mapper.MemberMapper">
+	<resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.Member">
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="member_truename" property="memberTruename" jdbcType="VARCHAR" />
+		<result column="member_avatar" property="memberAvatar" jdbcType="VARCHAR" />
+		<result column="member_sex" property="memberSex" jdbcType="INTEGER" />
+		<result column="member_birthday" property="memberBirthday" jdbcType="BIGINT" />
+		<result column="member_passwd" property="memberPasswd" jdbcType="VARCHAR" />
+		<result column="member_email" property="memberEmail" jdbcType="VARCHAR" />
+		<result column="member_qq" property="memberQq" jdbcType="VARCHAR" />
+		<result column="member_ww" property="memberWw" jdbcType="VARCHAR" />
+		<result column="member_login_num" property="memberLoginNum" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT" />
+		<result column="member_login_time" property="memberLoginTime" jdbcType="BIGINT" />
+		<result column="member_old_login_time" property="memberOldLoginTime" jdbcType="BIGINT" />
+		<result column="member_login_ip" property="memberLoginIp" jdbcType="VARCHAR" />
+		<result column="member_old_login_ip" property="memberOldLoginIp" jdbcType="VARCHAR" />
+		<result column="member_openid" property="memberOpenid" jdbcType="VARCHAR" />
+		<result column="member_info" property="memberInfo" jdbcType="VARCHAR" />
+		<result column="member_rank_points" property="memberRankPoints" jdbcType="INTEGER" />
+		<result column="member_consume_points" property="memberConsumePoints" jdbcType="INTEGER" />
+		<result column="available_predeposit" property="availablePredeposit" jdbcType="DECIMAL" />
+		<result column="freeze_predeposit" property="freezePredeposit" jdbcType="DECIMAL" />
+		<result column="inform_allow" property="informAllow" jdbcType="TINYINT" />
+		<result column="is_buy" property="isBuy" jdbcType="TINYINT" />
+		<result column="is_allowtalk" property="isAllowtalk" jdbcType="TINYINT" />
+		<result column="member_state" property="memberState" jdbcType="TINYINT" />
+		<result column="member_credit" property="memberCredit" jdbcType="INTEGER" />
+		<result column="member_snsvisitnum" property="memberSnsvisitnum" jdbcType="INTEGER" />
+		<result column="member_areaid" property="memberAreaid" jdbcType="VARCHAR" />
+		<result column="member_cityid" property="memberCityid" jdbcType="VARCHAR" />
+		<result column="member_provinceid" property="memberProvinceid" jdbcType="VARCHAR" />
+		<result column="member_areainfo" property="memberAreainfo" jdbcType="VARCHAR" />
+		<result column="is_del" property="isDel" jdbcType="VARCHAR" />
+		<result column="sign_code" property="signCode" jdbcType="VARCHAR"/>
+        <result column="sign_code_state" property="signCodeState" jdbcType="TINYINT"/>
+        <result column="member_mobile" property="memberMobile" jdbcType="VARCHAR"/>
+        <result column="member_gradeid" property="memberGradeId" jdbcType="VARCHAR" />
+        <result column="member_type" property="memberType" jdbcType="VARCHAR" />
+		<result column="gradeDate" property="gradeDate" jdbcType="BIGINT" />
+		<result column="user_type" property="userType" jdbcType="TINYINT" />
+		<result column="store_id" property="storeId" jdbcType="VARCHAR" />
+		<result column="industry_type" property="industryType" jdbcType="TINYINT" />
+		<result column="membeScore" property="membeScore" jdbcType="INTEGER" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		member_id,member_name,member_truename,
+		member_avatar,member_sex,member_birthday,
+		member_passwd,member_email,member_qq,
+		member_ww,member_login_num,
+		create_time,member_login_time,member_old_login_time,
+		member_login_ip,member_old_login_ip,
+		member_openid,
+		member_info,
+		<!-- member_sinaopenid,member_sinainfo, -->
+		member_consume_points,member_rank_points,available_predeposit,freeze_predeposit,
+		inform_allow,is_buy,is_allowtalk,member_state,
+		member_credit,member_snsvisitnum,member_areaid,
+		member_cityid,member_provinceid,member_areainfo,
+		member_mobile,member_gradeid,gradeDate
+	</sql>
+	<sql id="Base_Column_List2">
+		(SELECT 
+	    GROUP_CONCAT(t1.`member_truename`) 
+	  FROM
+	    shop_member t1 
+	  WHERE FIND_IN_SET(
+	      t1.member_id,
+	      (SELECT 
+	        GROUP_CONCAT(srls.`seller_id`) 
+	      FROM
+	        shop_r_leader_seller srls 
+	      WHERE srls.`leader_id` = a.`member_id` 
+	      GROUP BY srls.`leader_id`)
+	    )) leaderFarmer,
+	    (SELECT 
+	        GROUP_CONCAT(srls.`seller_id`) 
+	      FROM
+	        shop_r_leader_seller srls 
+	      WHERE srls.`leader_id` = a.`member_id` 
+	      GROUP BY srls.`leader_id`) leaderFarmerIds,
+	    (SELECT 
+	    GROUP_CONCAT(t1.`member_truename`) 
+	  FROM
+	    shop_member t1 
+	  WHERE FIND_IN_SET(
+	      t1.member_id,
+	      (SELECT 
+	        GROUP_CONCAT(srls.`leader_id`) 
+	      FROM
+	        shop_r_leader_seller srls 
+	      WHERE srls.`seller_id` = a.`member_id` 
+	      GROUP BY srls.`seller_id`)
+	    )) farmerLeader,
+	    (SELECT 
+	        GROUP_CONCAT(srls.`leader_id`) 
+	      FROM
+	        shop_r_leader_seller srls 
+	      WHERE srls.`seller_id` = a.`member_id` 
+	      GROUP BY srls.`seller_id`) farmerLeaderIds,
+	    district_id districtId,
+	    (select gc_name from shop_districts sd where sd.gc_id = a.district_id) districtText,
+	    (select ss.store_id from shop_store ss where ss.member_id = a.member_id) storeId,
+	    (select ss.is_index from shop_store ss where ss.member_id = a.member_id) isIndex,
+	    (select ss.is_tuijian from shop_store ss where ss.member_id = a.member_id) isTuijian,
+	    (select ss.is_show from shop_store ss where ss.member_id = a.member_id) isShow,
+		member_id memberId,member_name memberName,member_truename memberTruename,
+		member_avatar memberAvatar,member_sex memberSex,member_birthday memberBirthday,
+		member_passwd memberPasswd,member_email memberEmail,member_qq memberQq,
+		member_ww memberWw,member_login_num memberLoginNum,
+		create_time createTime,member_login_time memberLoginTime,member_old_login_time memberOldLoginTime,
+		member_login_ip memberLoginIp,member_old_login_ip memberOldLoginIp,
+		member_openid memberOpenid,
+		member_info memberInfo,
+		<!-- member_sinaopenid,member_sinainfo, -->
+		member_consume_points memberConsumePoints,member_rank_points memberRankPoints,available_predeposit availablePredeposit,
+		freeze_predeposit freezePredeposit,
+		inform_allow informAllow,is_buy isBuy,is_allowtalk isAllowtalk,member_state memberState,
+		member_credit memberCredit,member_snsvisitnum memberSnsvisitnum,member_areaid memberAreaid,
+		member_cityid memberCityid,member_provinceid memberProvinceid,member_areainfo memberAreainfo,
+		member_mobile memberMobile,member_gradeid memberGradeId,gradeDate gradeDate,user_type userType,industry_type industryType,
+		(member_consume_points+member_rank_points) membeScore
+	</sql>
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			and a.is_del = 0
+			<if test="condition.memberName != null and condition.memberName != '' ">
+				and a.member_name like
+				<if test="dbName == 'oracle'">'%'||#{condition.memberName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.memberName}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%',#{condition.memberName},'%' )</if>
+			</if>
+			<if test="condition.memberEmail != null and condition.memberEmail != ''">
+				and a.member_email  like
+				<if test="dbName == 'oracle'">'%'||#{condition.memberEmail}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.memberEmail}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%',#{condition.memberEmail},'%' )</if>
+			</if>
+			<if test="condition.memberTruename != null and condition.memberTruename != ''">
+				and a.member_truename  like
+				<if test="dbName == 'oracle'">'%'||#{condition.memberTruename}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.memberTruename}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%',#{condition.memberTruename},'%' )</if>
+			</if>
+			<if test="condition.status == 1">
+				and a.inform_allow = 0
+			</if>
+			<if test="condition.status == 2">
+				and a.is_buy = 0
+			</if>
+			<if test="condition.status == 3">
+				and a.is_allowtalk = 0
+			</if>
+			<if test="condition.status == 4">
+				and a.member_state = 0
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="whereStatement2">
+		<where>
+			1 = 1
+			and is_del = 0
+			<if test="memberName != null and memberName != '' ">
+				or member_name  = #{memberName}
+			</if>
+			<if test="memberEmail != null and memberEmail != ''">
+				or member_email  like
+				<if test="dbName == 'oracle'">'%'||#{memberEmail}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{memberEmail}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%','#{memberEmail}','%' )</if>
+			</if>
+			<if test="memberTruename != null and memberTruename != ''">
+				or member_truename  like
+				<if test="dbName == 'oracle'">'%'||#{memberTruename}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{memberTruename}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%',#{memberTruename},'%' )</if>
+			</if>
+			<!-- 获取指定时间断 -->
+	        <if test="startTime != null and endTime != null ">
+	            and create_time &gt;= #{startTime} and create_time &lt;= #{endTime}
+	        </if>
+			<if test="status == 1">
+				and inform_allow = 0
+			</if>
+			<if test="status == 2">
+				and is_buy = 0
+			</if>
+			<if test="status == 3">
+				and is_allowtalk = 0
+			</if>
+			<if test="status == 4">
+				and member_state = 0
+			</if>
+			<if test="memberOpenid !=null and memberOpenid!=''">
+				and member_openid = #{memberOpenid}
+			</if>
+			<if test="memberType !=null and memberType!=''">
+				and member_type = #{memberType}
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="whereStatement3">
+		<where>
+			1 = 1
+			and is_del = 0
+			<if test="memberName != null and memberName != '' ">
+				and member_name  = #{memberName}
+			</if>
+			<if test="startTime!=null and endTime!=null">
+				and create_time &gt;= #{startTime} and create_time &lt;= #{endTime}
+			</if>
+		</where>
+	</sql>
+	<!-- 分页查询count -->
+	<select id="findMemberCount" resultType="java.lang.Integer" parameterType="com.leimingtech.core.entity.base.Member">
+		select count(1) from shop_member
+		<include refid="whereStatement3" />
+	</select>
+
+	<!-- 分页查询List -->
+	<select id="findMemberList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.service.utils.page.Pager">
+		select
+		<include refid="Base_Column_List" />
+		from shop_member a
+		<include refid="whereStatement" />
+		<if test="condition.orderString == 1">
+				order by member_old_login_time desc
+		</if>
+		<if test="condition.orderString == 2">
+				order by member_login_num desc
+		</if>
+		<if test="condition.orderString == 3 or condition.orderString==null or condition.orderString=='' ">
+				order by create_time desc
+		</if>
+	</select>
+
+	<!-- 查询List -->
+	<select id="findMemberListall" resultMap="BaseResultMap">
+		select member_id,member_name from shop_member where member_state=1
+	</select>
+
+	<!-- 根据ID查询实体 -->
+	<select id="findMemberById" resultMap="BaseResultMap"
+		parameterType="java.lang.Long">
+		select
+		<include refid="Base_Column_List" />
+		from shop_member where member_id = #{id,jdbcType=VARCHAR} and is_del = 0
+	</select>
+    <!-- 保存实体 -->
+    <insert id="save" parameterType="com.leimingtech.core.entity.base.Member"  keyProperty="memberId">
+        insert into shop_member (member_id,member_name,member_passwd,member_email,create_time,member_state,
+        sign_code,sign_code_state,member_mobile,member_truename,member_avatar,member_gradeid,member_qq,
+        member_ww,member_consume_points,member_rank_points,member_openid,member_type,gradeDate,referee_id,user_type,industry_type)
+        values (
+         #{memberId,jdbcType=VARCHAR},#{memberName,jdbcType=VARCHAR},#{memberPasswd,jdbcType=VARCHAR},#{memberEmail,jdbcType=VARCHAR},#{createTime,jdbcType=BIGINT},#{memberState},
+        #{signCode},#{signCodeState},#{memberMobile,jdbcType=VARCHAR},#{memberTruename,jdbcType=VARCHAR},#{memberAvatar,jdbcType=VARCHAR}
+        ,#{memberGradeId,jdbcType=INTEGER},#{memberQq,jdbcType=VARCHAR},#{memberWw,jdbcType=VARCHAR},#{memberConsumePoints,jdbcType=INTEGER},#{memberRankPoints,jdbcType=INTEGER},#{memberOpenid},#{memberType},#{gradeDate,jdbcType=BIGINT},#{refereeId},#{userType},#{industryType})
+    </insert>
+    
+    <!-- 保存挂包帮关系 -->
+	<insert id="saveOrUpdateRelationByLeader" parameterType="java.util.List">
+		insert into shop_r_leader_seller values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.id},#{item.leaderId},#{item.sellerId})
+		</foreach>
+	</insert>
+	
+	<!-- 删除挂包帮关系   根据领导ID -->
+	<delete id="deleteByLeader" parameterType="java.lang.String">
+		delete from shop_r_leader_seller where leader_id = #{id}
+	</delete>
+
+	<!-- 根据ID删除数据 -->
+	<delete id="delete" parameterType="java.lang.String">
+		delete from shop_member where member_id = #{id}
+	</delete>
+	
+    
+    <!-- 根据ID查询实体 -->
+    <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List2" />
+        from shop_member a where member_id = #{memberId,jdbcType=VARCHAR}
+    </select>
+    
+    <!-- 根据会员名称获取会员信息 -->
+    <select id="findMemberByName" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List"/>
+		from shop_member a
+		where  a.member_name = #{memberName}
+	</select>
+	
+	 <update id="updateMember" parameterType="com.leimingtech.core.entity.base.Member">
+        update shop_member
+        <set>
+            <if test="memberTruename!=null and memberTruename!=''">
+                member_truename = #{memberTruename},
+            </if>
+            <if test="memberSex!=null">
+                member_sex = #{memberSex},
+            </if>
+            <if test="memberBirthday!=null and memberBirthday!=''">
+                member_birthday = #{memberBirthday},
+            </if>
+            <if test="memberQq!=null and memberQq!=''">
+                member_qq = #{memberQq},
+            </if>
+            <if test="memberWw != null and memberWw!=''">
+              	member_ww = #{memberWw},
+            </if>
+            <if test="memberEmail!=null and memberEmail!=''">
+                member_email = #{memberEmail},
+            </if>
+            <if test="memberPasswd!=null and memberPasswd!=''">
+                member_passwd = #{memberPasswd},
+            </if>
+            <if test="memberAvatar!=null and memberAvatar!=''">
+                member_avatar = #{memberAvatar},
+            </if>
+            <if test="memberAreaid!=null  and memberAreaid!=''">
+                member_areaid = #{memberAreaid},
+            </if>
+            <if test="memberCityid!=null  and memberCityid!=''">
+                member_cityid = #{memberCityid},
+            </if>
+            <if test="memberAreainfo!=null  and memberAreainfo!=''">
+                member_areainfo = #{memberAreainfo},
+            </if>
+            <if test="memberProvinceid!=null and memberProvinceid!=''">
+                member_provinceid = #{memberProvinceid},
+            </if>
+            <if test="signCodeState!=null">
+                sign_code_state = #{signCodeState},
+            </if>
+            <if test="memberMobile!=null and memberMobile!=''">
+                member_mobile = #{memberMobile},
+            </if>
+            
+            <if test="memberLoginNum!=null">
+                member_login_num = member_login_num+1,
+            </if>
+            <if test="memberLoginTime!=null and memberLoginTime!=''">
+                member_login_time = #{memberLoginTime},
+            </if>
+            <if test="memberOldLoginTime!=null and memberOldLoginTime!=''">
+                member_old_login_time = #{memberOldLoginTime},
+            </if>
+            <if test="memberLoginIp!=null and memberLoginIp!=''">
+                member_login_ip = #{memberLoginIp},
+            </if>
+            <if test="memberRankPoints!=null">
+                member_rank_points = #{memberRankPoints},
+            </if>
+            <if test="memberConsumePoints!=null">
+                member_consume_points = #{memberConsumePoints},
+            </if>
+            <if test="availablePredeposit!=null">
+                available_predeposit = #{availablePredeposit},
+            </if>
+            <if test="freezePredeposit!=null">
+                freeze_predeposit = #{freezePredeposit},
+            </if>
+            <if test="informAllow!=null">
+                inform_allow = #{informAllow},
+            </if>
+            <if test="isBuy!=null">
+                is_buy = #{isBuy},
+            </if>
+            <if test="isAllowtalk!=null">
+                is_allowtalk = #{isAllowtalk},
+            </if>
+            <if test="memberState != null">
+               	member_state = #{memberState},
+            </if>
+            <if test="memberCredit != null">
+               	member_credit = #{memberCredit},
+            </if>
+            <if test="memberSnsvisitnum != null">
+               	member_snsvisitnum = #{memberSnsvisitnum},
+            </if>
+            <if test="memberGradeId != null and memberGradeId != ''">
+               	member_gradeid = #{memberGradeId},
+            </if>
+            <if test="memberOpenid != null and memberOpenid != ''">
+               	member_openid = #{memberOpenid},
+            </if>
+			<if test="gradeDate != null and gradeDate != ''">
+				gradeDate = #{gradeDate}
+			</if>
+        </set>
+        where member_id = #{memberId}
+    </update>
+    
+    
+    <select id="findMemberByEmail" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_member a
+        where  a.member_email = #{memberEmail}
+    </select>
+    
+    <select id="findMemberByMobile" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_member a
+        where  a.member_mobile = #{memberMobile}
+    </select>
+    
+    <select id="findMember" resultMap="BaseResultMap" parameterType="com.leimingtech.core.entity.base.Member">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_member
+        <include refid="whereStatement2" />
+    </select>
+    
+    <select id="findMemberCountByMobile" resultType="Integer" parameterType="java.lang.String">
+        select count(*) from shop_member a  where  a.member_mobile = #{memberMobile}
+    </select>
+    
+    <!-- 注册时验证用户是否存在 -->
+    <select id="findMemberExistCount" resultType="Integer" parameterType="java.lang.String">
+        select count(1) from shop_member
+        <where>
+        	2=1
+        	<if test="memberName != null and memberName != '' ">
+				or member_name = #{memberName}
+			</if>
+			<if test="memberMobile != null and memberMobile != '' ">
+				or member_mobile = #{memberMobile}
+			</if>
+			<if test="memberEmail != null and memberEmail != '' ">
+				or member_email = #{memberEmail}
+			</if>
+        </where>
+    </select>
+    
+    <!--登录时验证用户是否存在 -->
+    <select id="findMemberExist" resultMap="BaseResultMap" parameterType="com.leimingtech.core.entity.base.Member">
+        select <include refid="Base_Column_List2"/>
+        from shop_member a
+        <where>
+        	2=1
+			<if test="memberName != null and memberName != '' ">
+				or member_name = #{memberName}
+			</if>
+			<if test="memberMobile != null and memberMobile != '' ">
+				or member_mobile = #{memberMobile}
+			</if>
+			<if test="memberEmail != null and memberEmail != '' ">
+				or member_email = #{memberEmail}
+			</if>
+        </where>
+    </select>
+    
+    <!-- 通过会员等级获取会员总数 -->
+    <select id="findMemberCountByGradeId" resultType="Integer" parameterType="java.lang.String">
+    	select count(*) from shop_member where member_gradeid = #{memberGradeId}
+    </select>
+    
+    <sql id="whereStatementIsLike">
+		<where>
+			1 = 1
+			and a.is_del = 0
+			
+			<if test="condition.memberName != null and condition.memberName != '' and condition.memberEmail != null and condition.memberEmail != '' and condition.memberTruename != null and condition.memberTruename != ''">
+				and ( 
+				a.member_name like
+				<if test="dbName == 'oracle'">'%'||#{condition.memberName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.memberName}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%',#{condition.memberName},'%' )</if>
+                
+                or a.member_email  like
+				<if test="dbName == 'oracle'">'%'||#{condition.memberEmail}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.memberEmail}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%',#{condition.memberEmail},'%' )</if>
+                
+                or a.member_truename  like
+				<if test="dbName == 'oracle'">'%'||#{condition.memberTruename}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.memberTruename}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%',#{condition.memberTruename},'%' )</if>
+                )
+			</if>
+			
+			<if test="condition.status == 1">
+				and a.inform_allow = 0
+			</if>
+			<if test="condition.status == 2">
+				and a.is_buy = 0
+			</if>
+			<if test="condition.status == 3">
+				and a.is_allowtalk = 0
+			</if>
+			<if test="condition.status == 4">
+				and a.member_state = 0
+			</if>
+		</where>
+	</sql>
+    
+    <!-- 分页查询List -->
+	<select id="findMemberListIsLike" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.service.utils.page.Pager">
+		select
+		<include refid="Base_Column_List" />
+		from shop_member a
+		<include refid="whereStatementIsLike" />
+		<if test="condition.orderString == 1">
+				order by member_old_login_time desc
+		</if>
+		<if test="condition.orderString == 2">
+				order by member_login_num desc
+		</if>
+		<if test="condition.orderString == 3 or condition.orderString==null or condition.orderString=='' ">
+				order by create_time desc
+		</if>
+	</select>
+	
+	<!-- 查询区域开店用户数 -->
+	<select id="findCountByDistrict" resultType="java.lang.Integer" parameterType="com.leimingtech.core.entity.base.Member">
+		select count(1) from shop_member sm
+		<where>
+			sm.member_id IN (
+			SELECT ss.member_id 
+			FROM shop_seller ss 
+			LEFT JOIN shop_store sstore ON sstore.store_id = ss.store_id
+			where ss.store_id IS NOT NULL and sstore.is_show = 1)
+			and sm.user_type = 2
+			<if test="districtId != null and districtId != '' ">
+				and sm.district_id = #{districtId}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询贫困用户 -->
+	<select id="queryMemberList" resultMap="BaseResultMap" parameterType="com.leimingtech.core.entity.base.Member">
+		select sm.member_id,sm.member_name,sst.store_name member_truename,sst.store_label member_avatar,sst.store_id
+		from shop_member sm
+		LEFT JOIN shop_store sst ON sst.member_id = sm.member_id 
+		<where>
+			sm.member_id IN (
+			SELECT ss.member_id 
+			FROM shop_seller ss 
+			LEFT JOIN shop_store sstore ON sstore.store_id = ss.store_id
+			where ss.store_id IS NOT NULL and sstore.is_show = 1)
+			and sm.user_type = 2
+			<if test="districtId != null and districtId != '' ">
+				and sm.district_id = #{districtId}
+			</if>
+			<if test="memberName != null and memberName != '' ">
+				and sst.store_name like concat('%',#{memberName},'%')
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- 验证注册用户是否为行业用户 -->
+    <select id="findTempTobacoouserCount" resultType="Integer" parameterType="java.lang.String">
+        select count(1) from fnh_temp_tobacoouser where mobile = #{mobile}
+    </select>
+    
+    <!-- 验证推荐用户是否为行业用户 -->
+    <select id="findRefereeUserType" resultType="Integer" parameterType="java.lang.String">
+        select industry_type from shop_member where member_id = #{refereeId}
+    </select>
+    
+    <resultMap id="BaseResultMapTwo" type="com.leimingtech.core.entity.base.Member">
+		<result column="member_id" property="memberId" jdbcType="VARCHAR" />
+		<result column="member_name" property="memberName" jdbcType="VARCHAR" />
+		<result column="member_truename" property="memberTruename" jdbcType="VARCHAR" />
+		<result column="member_avatar" property="memberAvatar" jdbcType="VARCHAR" />
+		<result column="industry_type" property="industryType" jdbcType="TINYINT" />
+	</resultMap>
+    <!-- 根据推荐人ID查看推荐人信息 -->
+    <select id="findRefereeUser" resultMap="BaseResultMapTwo" parameterType="java.lang.String">
+        select member_id,member_name,member_truename,member_avatar,industry_type from shop_member where member_id = #{refereeId}
+    </select>
+	
+</mapper>

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leimingtech.service.module.seller.dao.mapper.ShopSellerMapper">
+
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.ShopSeller">
+        <result column="seller_id" property="sellerId" jdbcType="VARCHAR"/>
+        <result column="seller_name" property="sellerName" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="seller_group_id" property="sellerGroupId" jdbcType="VARCHAR"/>
+        <result column="store_id" property="storeId" jdbcType="VARCHAR"/>
+        <result column="is_admin" property="isAdmin" jdbcType="INTEGER"/>
+        <result column="seller_quicklink" property="sellerQuicklink" jdbcType="VARCHAR"/>
+        <result column="last_login_time" property="lastLoginTime" jdbcType="BIGINT"/>
+        <result column="is_del" property="isDel" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		seller_id,
+		seller_name,
+		member_id,
+		seller_group_id,
+		store_id,
+		is_admin,
+		seller_quicklink,
+		last_login_time,
+		is_del,
+		create_time,
+		update_time
+	</sql>
+
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition != null">
+                and c.store_id=#{condition}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 这个应该不包括自己，数据库查询时，需要加上is_admin=0不是管理员 -->
+    <select id="findShopSellerPagerList" resultMap="BaseResultMap"
+            parameterType="com.leimingtech.service.utils.page.Pager">
+
+        SELECT * from shop_seller
+        where 1=1
+        <if test="condition != null">
+            and store_id = #{condition}
+        </if>
+        and is_admin = 0
+    </select>
+
+    <select id="findShopSellerAllList" resultMap="BaseResultMap"
+            parameterType="com.leimingtech.core.entity.base.ShopSeller">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from shop_seller order by create_time desc
+    </select>
+
+    <!-- 获取店铺会员列表 -->
+    <select id="findSellerListByStoreId" resultMap="BaseResultMap"
+            parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from shop_seller
+        where store_id=#{storeId}
+    </select>
+
+    <select id="findShopSellerBySellerId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_seller where seller_id = #{sellerId}
+    </select>
+
+    <!-- 通过会员id获取其店铺账号信息 -->
+    <select id="findShopSellerByMemberId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_seller where member_id = #{memberId}
+    </select>
+
+    <delete id="deleteShopSellerBySellerId" parameterType="java.lang.String">
+		delete from
+		shop_seller where seller_id = #{sellerId}
+	</delete>
+
+    <insert id="saveShopSeller" parameterType="com.leimingtech.core.entity.base.ShopSeller"
+            keyProperty="sellerId">
+
+        insert into shop_seller
+
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="sellerId != null and sellerId != ''">
+                seller_id,
+            </if>
+            <if test="sellerName != null and sellerName != ''">
+                seller_name,
+            </if>
+            <if test="memberId != null and memberId != ''">
+                member_id,
+            </if>
+            <if test="sellerGroupId != null and sellerGroupId != ''">
+                seller_group_id,
+            </if>
+            <if test="storeId != null and storeId != ''">
+                store_id,
+            </if>
+            <if test="isAdmin != null">
+                is_admin,
+            </if>
+            <if test="sellerQuicklink != null and sellerQuicklink != ''">
+                seller_quicklink,
+            </if>
+            <if test="lastLoginTime != null ">
+                last_login_time,
+            </if>
+            <if test="isDel != null">
+                is_del,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="updateTime != null ">
+                update_time,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="sellerId != null and sellerId != ''">
+                #{sellerId},
+            </if>
+            <if test="sellerName != null and sellerName != ''">
+                #{sellerName},
+            </if>
+            <if test="memberId != null and memberId != ''">
+                #{memberId},
+            </if>
+            <if test="sellerGroupId != null and sellerGroupId != ''">
+                #{sellerGroupId},
+            </if>
+            <if test="storeId != null and storeId != ''">
+                #{storeId},
+            </if>
+            <if test="isAdmin != null">
+                #{isAdmin},
+            </if>
+            <if test="sellerQuicklink != null and sellerQuicklink != ''">
+                #{sellerQuicklink},
+            </if>
+            <if test="lastLoginTime != null ">
+                #{lastLoginTime},
+            </if>
+            <if test="isDel != null">
+                #{isDel},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                #{updateTime},
+            </if>
+        </trim>
+
+    </insert>
+
+    <update id="updateShopSeller" parameterType="com.leimingtech.core.entity.base.ShopSeller">
+
+        update shop_seller
+        <set>
+            <if test="sellerId != null and sellerId != ''">
+                seller_id = #{sellerId},
+            </if>
+            <if test="sellerName != null and sellerName != ''">
+                seller_name = #{sellerName},
+            </if>
+            <if test="memberId != null and memberId != ''">
+                member_id = #{memberId},
+            </if>
+            <if test="sellerGroupId != null and sellerGroupId != ''">
+                seller_group_id = #{sellerGroupId},
+            </if>
+            <if test="storeId != null and storeId != ''">
+                store_id = #{storeId},
+            </if>
+            <if test="isAdmin != null">
+                is_admin = #{isAdmin},
+            </if>
+            <if test="sellerQuicklink != null and sellerQuicklink != ''">
+                seller_quicklink = #{sellerQuicklink},
+            </if>
+            <if test="lastLoginTime != null ">
+                last_login_time = #{lastLoginTime},
+            </if>
+            <if test="isDel != null">
+                is_del = #{isDel},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="updateTime != null ">
+                update_time = #{updateTime},
+            </if>
+        </set>
+
+        WHERE seller_id = #{sellerId}
+
+    </update>
+
+    <select id="findShopSellerBySellerName" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select * from shop_seller where seller_name = #{sellerName}
+	</select>
+
+</mapper>

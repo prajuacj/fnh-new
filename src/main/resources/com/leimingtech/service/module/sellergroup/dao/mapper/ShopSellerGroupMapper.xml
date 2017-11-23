@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leimingtech.service.module.sellergroup.dao.mapper.ShopSellerGroupMapper">
+
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.ShopSellerGroup">
+        <result column="group_id" property="groupId" jdbcType="VARCHAR"/>
+        <result column="group_name" property="groupName" jdbcType="VARCHAR"/>
+        <result column="limits" property="limits" jdbcType="VARCHAR"/>
+        <result column="store_id" property="storeId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		group_id,
+		group_name,
+		limits,
+		store_id
+	</sql>
+
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition != null">
+                and store_id = #{condition}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findShopSellerGroupPagerList" resultMap="BaseResultMap"
+            parameterType="com.leimingtech.service.utils.page.Pager">
+        select * from shop_seller_group
+        <include refid="whereStatement"/>
+    </select>
+
+    <select id="findShopSellerGroupAllList" resultMap="BaseResultMap"
+            parameterType="com.leimingtech.core.entity.base.ShopSellerGroup">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from shop_seller_group
+    </select>
+
+    <select id="findShopSellerGroupListByStoreId" resultMap="BaseResultMap"
+            parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from shop_seller_group
+        where 1=1
+        <if test="storeId != null and storeId != ''">
+            and store_id=#{storeId}
+        </if>
+    </select>
+
+    <select id="findShopSellerGroupByGroupId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_seller_group c where c.group_id = #{groupId}
+    </select>
+
+    <delete id="deleteShopSellerGroupByGroupId" parameterType="java.lang.String">
+		delete from
+		shop_seller_group where group_id = #{groupId}
+	</delete>
+
+    <insert id="saveShopSellerGroup" parameterType="com.leimingtech.core.entity.base.ShopSellerGroup"
+            keyProperty="groupId">
+        insert into shop_seller_group
+
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="groupId != null and groupId != ''">
+                group_id,
+            </if>
+            <if test="groupName != null and groupName != ''">
+                group_name,
+            </if>
+            <if test="limits != null and limits != ''">
+                limits,
+            </if>
+            <if test="storeId != null and storeId != ''">
+                store_id,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="groupId != null and groupId != ''">
+                #{groupId},
+            </if>
+            <if test="groupName != null and groupName != ''">
+                #{groupName},
+            </if>
+            <if test="limits != null and limits != ''">
+                #{limits},
+            </if>
+            <if test="storeId != null and storeId != ''">
+                #{storeId},
+            </if>
+        </trim>
+
+    </insert>
+
+    <update id="updateShopSellerGroup" parameterType="com.leimingtech.core.entity.base.ShopSellerGroup">
+
+        update shop_seller_group
+        <set>
+            <if test="groupId != null and groupId != ''">
+                group_id = #{groupId},
+            </if>
+            <if test="groupName != null and groupName != ''">
+                group_name = #{groupName},
+            </if>
+            <if test="limits != null and limits != ''">
+                limits = #{limits},
+            </if>
+            <if test="storeId != null and storeId != ''">
+                store_id = #{storeId},
+            </if>
+        </set>
+
+        WHERE group_id = #{groupId}
+
+    </update>
+
+</mapper>

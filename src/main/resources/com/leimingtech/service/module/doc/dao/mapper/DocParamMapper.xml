@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.doc.dao.mapper.DocParamMapper">
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.DocParamEntity">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="docid" property="docid" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="param_type" property="type" jdbcType="INTEGER"/>
+        <result column="isrequired" property="isrequired" jdbcType="VARCHAR"/>
+        <result column="example_value" property="exampleValue" jdbcType="VARCHAR"/>
+        <result column="defalut_value" property="defalutValue" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="createdby" property="createdby" jdbcType="VARCHAR"/>
+        <result column="updatecount" property="updatecount" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, docid, name, param_type, isrequired, example_value,defalut_value, description
+    </sql>
+
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            and a.docid = #{condition.docid}
+            <if test="condition.name != null and condition.name != ''">
+                and a.name like
+                <if test="dbName == 'oracle'">'%'||#{condition.name}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.name}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{condition.name},'%')</if>
+            </if>
+        </where>
+    </sql>
+
+    <sql id="whereStatement1">
+        <where>
+            1 = 1
+            and a.docid = #{docid}
+        </where>
+    </sql>
+
+    <sql id="whereStatement2">
+        <where>
+            1 = 1
+            and a.docid = #{docid}
+            <if test="name != null and name != ''">
+                and a.name like
+                <if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+            </if>
+        </where>
+    </sql>
+
+    <!--查询条数-->
+    <select id="getParamTotal" parameterType="com.leimingtech.core.entity.base.DocParamEntity" resultType="int">
+        SELECT count(1) FROM shop_doc_param a
+        <include refid="whereStatement2"/>
+    </select>
+
+    <!--查询分页列表-->
+    <select id="getParamList" parameterType="com.leimingtech.service.utils.page.Pager" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop_doc_param a
+        <include refid="whereStatement"/>
+    </select>
+
+    <!--查询api下所有列表-->
+    <select id="getAllParamList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop_doc_param a
+        <include refid="whereStatement1"/>
+    </select>
+
+    <!--根据id获取数据-->
+    <select id="getParamById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_doc_param where id = #{id}
+    </select>
+
+    <!--保存数据-->
+    <insert id="save" parameterType="com.leimingtech.core.entity.base.DocParamEntity" keyProperty="id">
+        INSERT INTO shop_doc_param(id,docid, name, param_type, isrequired, example_value, defalut_value, description, create_time, createdby)
+        VALUES(#{id},#{docid},#{name},#{type},#{isrequired},#{exampleValue},#{defalutValue},#{description},#{createTime},#{createdby})
+    </insert>
+
+    <!--更新数据-->
+    <update id="update" parameterType="com.leimingtech.core.entity.base.DocParamEntity">
+        update shop_doc_param
+        set 
+        name = #{name,jdbcType=VARCHAR},
+        isrequired = #{isrequired,jdbcType=VARCHAR},
+        param_type = #{type,jdbcType=INTEGER},
+        example_value = #{exampleValue,jdbcType=VARCHAR},
+        defalut_value = #{defalutValue,jdbcType=VARCHAR},
+        description = #{description,jdbcType=VARCHAR},
+        update_time = #{updateTime,jdbcType=BIGINT},
+        updateby = #{updateby,jdbcType=VARCHAR}
+        where id=#{id,jdbcType=INTEGER}
+    </update>
+
+    <!--删除数据-->
+    <delete id="delete" parameterType="java.lang.String">
+        delete from shop_doc_param where id=#{id}
+    </delete>
+
+</mapper>

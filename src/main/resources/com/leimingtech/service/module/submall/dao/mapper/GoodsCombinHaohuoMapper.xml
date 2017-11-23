@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.submall.dao.mapper.GoodsCombinHaohuoMapper">
+	<resultMap id="HaohuoMap" type="com.leimingtech.core.entity.base.GoodsCombinHaoHuo">
+		<result column="combin_code" property="code" jdbcType="VARCHAR" />
+		<result column="combin_name" property="name" jdbcType="VARCHAR" />
+		<result column="combin_title" property="title" jdbcType="VARCHAR" />
+		<result column="combin_subtitle" property="subTitle" jdbcType="VARCHAR" />
+		<result column="combin_img" property="img" jdbcType="VARCHAR" />
+		<result column="combin_logo" property="logo" jdbcType="VARCHAR" />
+		<result column="place_type" property="placeType" jdbcType="VARCHAR" />
+		<result column="isindex" property="isindex" jdbcType="VARCHAR" />
+		<result column="combin_order" property="combinOrder" jdbcType="INTEGER" />
+		<result column="create_by" property="createBy" jdbcType="INTEGER" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<resultMap id="GoodsMap" type="com.leimingtech.core.entity.base.Goods">
+        <result column="goods_id" property="goodsId" jdbcType="VARCHAR"/>
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="goods_subtitle" property="goodsSubtitle" jdbcType="VARCHAR"/>
+        <result column="gc_id" property="gcId" jdbcType="VARCHAR"/>
+        <result column="gc_name" property="gcName" jdbcType="VARCHAR"/>
+        <result column="brand_id" property="brandId" jdbcType="VARCHAR"/>
+        <result column="brand_name" property="brandName" jdbcType="VARCHAR"/>
+        <result column="type_id" property="typeId" jdbcType="VARCHAR"/>
+        <result column="store_id" property="storeId" jdbcType="VARCHAR"/>
+        <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
+        <result column="spec_open" property="specOpen" jdbcType="INTEGER"/>
+        <result column="spec_id" property="specId" jdbcType="VARCHAR"/>
+        <result column="spec_name" property="specName" jdbcType="VARCHAR"/>
+        <result column="goods_image" property="goodsImage" jdbcType="VARCHAR"/>
+        <result column="goods_image_more" property="goodsImageMore" jdbcType="VARCHAR"/>
+        <result column="goods_store_price" property="goodsStorePrice" jdbcType="DECIMAL"/>
+        <result column="goods_serial" property="goodsSerial" jdbcType="VARCHAR"/>
+        <result column="goods_show" property="goodsShow" jdbcType="INTEGER"/>
+        <result column="goods_click" property="goodsClick" jdbcType="INTEGER"/>
+        <result column="goods_state" property="goodsState" jdbcType="INTEGER"/>
+        <result column="goods_commend" property="goodsCommend" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="goods_keywords" property="goodsKeywords" jdbcType="VARCHAR"/>
+        <result column="goods_description" property="goodsDescription" jdbcType="VARCHAR"/>
+        <result column="goods_body" property="goodsBody" jdbcType="VARCHAR"/>
+        <result column="goods_attr" property="goodsAttr" jdbcType="VARCHAR"/>
+        <result column="goods_spec" property="goodsSpec" jdbcType="VARCHAR"/>
+        <result column="goods_col_img" property="goodsColImg" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="start_time" property="startTime" jdbcType="BIGINT"/>
+        <result column="end_time" property="endTime" jdbcType="BIGINT"/>
+        <result column="goods_form" property="goodsForm" jdbcType="INTEGER"/>
+        <result column="transport_id" property="transportId" jdbcType="VARCHAR"/>
+        <result column="py_price" property="pyPrice" jdbcType="DECIMAL"/>
+        <result column="kd_price" property="kdPrice" jdbcType="DECIMAL"/>
+        <result column="es_price" property="esPrice" jdbcType="DECIMAL"/>
+        <result column="city_id" property="cityId" jdbcType="VARCHAR"/>
+        <result column="city_name" property="cityName" jdbcType="VARCHAR"/>
+        <result column="province_id" property="provinceId" jdbcType="VARCHAR"/>
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR"/>
+        <result column="goods_close_reason" property="goodsCloseReason" jdbcType="VARCHAR"/>
+        <result column="goods_store_state" property="goodsStoreState" jdbcType="INTEGER"/>
+        <result column="commentnum" property="commentnum" jdbcType="INTEGER"/>
+        <result column="salenum" property="salenum" jdbcType="INTEGER"/>
+        <result column="goods_collect" property="goodsCollect" jdbcType="INTEGER"/>
+        <result column="goods_transfee_charge" property="goodsTransfeeCharge" jdbcType="INTEGER"/>
+        <result column="store_class_id" property="storeClassId" jdbcType="VARCHAR"/>
+        <result column="goods_market_price" property="goodsMarketPrice" jdbcType="DECIMAL"/>
+        <result column="goods_cost_price" property="goodCostPrice" jdbcType="DECIMAL"/>
+        <result column="static_url" property="staticurl" jdbcType="VARCHAR"/>
+        <result column="dynameic_url" property="dynameicurl" jdbcType="VARCHAR"/>
+        <result column="real_url" property="realurl" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <resultMap id="HaohuoAndGoodsMap" extends="HaohuoMap" type="com.leimingtech.core.entity.vo.IndexHaohuoGoodsVo">
+    	<collection property="goods" ofType="com.leimingtech.core.entity.base.Goods"
+                    column="combin_code" javaType="arraylist"
+                    select="com.leimingtech.service.module.submall.dao.mapper.GoodsCombinHaohuoMapper.queryGoodsByHaohuoIdAndLimit6">
+        </collection>
+    </resultMap>
+	
+	<select id="queryHaohuo" resultMap="HaohuoMap">
+		SELECT 
+		  combin_code,
+		  combin_name,
+		  combin_title,
+		  combin_subtitle,
+		  combin_img,
+		  combin_logo,
+		  place_type,
+		  isindex,
+		  combin_order,
+		  create_time,
+		  create_by 
+		FROM
+		  shop_goods_combinhaohuo 
+		ORDER BY combin_order desc
+	</select>
+	
+	<select id="queryHaohuoByPager" parameterType="com.leimingtech.service.utils.page.Pager" resultMap="HaohuoMap">
+		SELECT 
+		  combin_code,
+		  combin_name,
+		  combin_title,
+		  combin_subtitle,
+		  combin_img,
+		  combin_logo,
+		  place_type,
+		  isindex,
+		  combin_order,
+		  create_time,
+		  create_by 
+		FROM
+		  shop_goods_combinhaohuo 
+		ORDER BY combin_order desc
+	</select>
+	
+	<insert id="savaHaohuo" parameterType="com.leimingtech.core.entity.base.GoodsCombinHaoHuo">
+		INSERT INTO `shop_goods_combinhaohuo` (
+		  `combin_code`,
+		  `combin_name`,
+		  `combin_title`,
+		  `combin_subtitle`,
+		  `combin_img`,
+		  `combin_logo`,
+		  `place_type`,
+		  `isindex`,
+		  `combin_order`,
+		  `create_time`,
+		  `create_by`
+		) 
+		VALUES
+		  (
+		    #{code},
+		    #{name},
+		    #{title},
+		    #{subTitle},
+		    #{img},
+		    #{logo},
+		    #{placeType},
+		    #{isindex},
+		    #{combinOrder},
+		    NOW(),
+		    #{createBy}
+		  )
+	</insert>
+	
+	<delete id="deleteHaohuoById" parameterType="string">
+		delete from shop_goods_combinhaohuo where combin_code = #{code}
+	</delete>
+	
+	<delete id="deleteHaohuoRelationById" parameterType="string">
+		DELETE 
+		FROM
+		  `shop_goods_combin_relation` 
+		WHERE `combin_code` = #{code}
+	</delete>
+	
+	<select id="queryHaohuoById" parameterType="string" resultMap="HaohuoMap">
+		SELECT 
+		  combin_code,
+		  combin_name,
+		  combin_title,
+		  combin_subtitle,
+		  combin_img,
+		  combin_logo,
+		  place_type,
+		  isindex,
+		  combin_order,
+		  create_time,
+		  create_by 
+		FROM
+		  shop_goods_combinhaohuo 
+		where combin_code = #{combinCode}
+	</select>
+	
+	<select id="queryGoodsByHaohuoId" parameterType="string" resultMap="GoodsMap">
+		SELECT 
+		  sg.* 
+		FROM
+		  shop_goods sg 
+		  LEFT JOIN shop_goods_combin_relation sgcr 
+		    ON sg.`goods_id` = sgcr.`goods_id` 
+		WHERE sgcr.combin_code = #{combinCode}
+		ORDER BY sgcr.`group_order` ASC 
+	</select>
+	
+	<select id="queryGoodsByHaohuoIdAndLimit6" parameterType="string" resultMap="GoodsMap">
+		SELECT 
+		  sg.* 
+		FROM
+		  shop_goods sg 
+		  LEFT JOIN shop_goods_combin_relation sgcr 
+		    ON sg.`goods_id` = sgcr.`goods_id` 
+		WHERE sgcr.combin_code = #{combinCode}
+		ORDER BY sgcr.`group_order` ASC 
+		LIMIT 6
+	</select>
+	
+	<select id="queryHaohuoByIndex" resultMap="HaohuoMap">
+		SELECT 
+		    sgc.*
+		  FROM
+		    shop_goods_combinhaohuo sgc 
+		  WHERE sgc.isindex = '1' 
+		  ORDER BY sgc.combin_order DESC 
+		  LIMIT 3
+	</select>
+	
+	<select id="queryHaohuoAndGoodsByIndex" resultMap="HaohuoAndGoodsMap">
+		SELECT 
+		  sgc.* 
+		FROM
+		  shop_goods_combinhaohuo sgc 
+		WHERE sgc.isindex = '1' 
+		ORDER BY sgc.combin_order DESC 
+		LIMIT 3,99
+	</select>
+	
+	<select id="queryGoodsByPager" resultMap="GoodsMap" parameterType="com.leimingtech.service.utils.page.Pager">
+		SELECT sg.*
+        from shop_goods sg
+        LEFT JOIN shop_goods_class b ON b.gc_id = sg.gc_id
+        WHERE 1 = 1
+        <if test='condition.code != null and condition.code !=""'>
+        	AND NOT EXISTS(select 1 from shop_goods_combin_relation sgcr where sgcr.combin_code = #{condition.code} and sgcr.goods_id = sg.goods_id)
+        </if>
+        <if test="condition.gcId != null and condition.gcId != ''">
+            and
+            (
+              sg.gc_id = #{condition.gcId} OR
+              b.gc_idpath LIKE
+              <if test="dbName == 'oracle'">'%'||#{condition.gcId}||'%'</if>
+              <if test="dbName == 'mssql'">'%'+#{condition.gcId}+'%'</if>
+              <if test="dbName == 'mysql'">CONCAT('%',#{condition.gcId},'%')</if>
+            )
+        </if>
+	</select>
+	<insert id="saveHaohuoGoods" parameterType="java.util.List">
+		INSERT INTO `shop_goods_combin_relation` (
+		  `combin_code`,
+		  `goods_id`,
+		  `group_order`
+		) 
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			(#{item.combinCode},#{item.goodsId},#{item.groupOrder})
+		</foreach>
+	</insert>
+	<delete id="deleteHaohuoGoods" parameterType="java.util.HashMap">
+		delete from shop_goods_combin_relation where combin_code = #{code} and FIND_IN_SET(goods_id, #{deleteIds})
+	</delete>
+</mapper>

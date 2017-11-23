@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.trade.dao.mapper.OrderBillTotalMapper">
+	<resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.OrderBillTotal">
+		<result column="obt_id" property="obtId" jdbcType="VARCHAR" />
+		<result column="obt_no" property="obtNo" jdbcType="VARCHAR" />
+		<result column="obt_start_time" property="obtStartTime" jdbcType="BIGINT" />
+		<result column="obt_end_time" property="obtEndTime" jdbcType="BIGINT" /> 
+		<result column="obt_order_totals" property="obtOrderTotals" jdbcType="DECIMAL" />
+		<result column="obt_shipping_totals" property="obtShippingTotals" jdbcType="DECIMAL" />
+		<result column="obt_order_return_totals" property="obtOrderReturnTotals" jdbcType="DECIMAL" />
+		<result column="obt_commis_totals" property="obtCommisTotals" jdbcType="DECIMAL" />
+		<result column="obt_commis_return_totals" property="obtCommisReturnTotals" jdbcType="DECIMAL" />
+		<result column="obt_store_cost_totals" property="obtStoreCostTotals" jdbcType="DECIMAL" />
+		<result column="obt_result_totals" property="obtResultTotals" jdbcType="DECIMAL" />
+		<result column="create_time" property="createTime" jdbcType="BIGINT"/>
+		<result column="obt_state" property="obtState" jdbcType="INTEGER" />
+		<result column="obt_pay_time" property="obtPayTime" jdbcType="BIGINT" />
+		<result column="obt_pay_content" property="obtPayContent" jdbcType="VARCHAR" />
+		<result column="obt_store_id" property="obtStoreId" jdbcType="INTEGER" />
+		<result column="obt_store_name" property="obtStoreName" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 结算管理总账单excel超类 -->
+	<resultMap id="TotalExcelVoMap" type="com.leimingtech.core.entity.vo.OrderBillTotalExcelVo">
+		<result column="obt_order_totals" property="obtOrderTotals" jdbcType="DECIMAL" />
+		<result column="obt_shipping_totals" property="obtShippingTotals" jdbcType="DECIMAL" />
+		<result column="obt_order_return_totals" property="obtOrderReturnTotals" jdbcType="DECIMAL" />
+		<result column="obt_commis_totals" property="obtCommisTotals" jdbcType="DECIMAL" />
+		<result column="obt_commis_return_totals" property="obtCommisReturnTotals" jdbcType="DECIMAL" />
+		<result column="obt_store_cost_totals" property="obtStoreCostTotals" jdbcType="DECIMAL" /> 
+		<result column="obt_result_totals" property="obtResultTotals" jdbcType="DECIMAL" />
+		<result column="obt_store_name" property="storeName" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	<!-- 结算批量转账超类 -->
+	<resultMap id="BulkTransferMap" type="com.leimingtech.core.entity.vo.BillBulkTransferVo">
+		<result column="obt_no" property="obtNo" jdbcType="VARCHAR"/>
+		<result column="alipay_account_number" property="alipayAcNumber" jdbcType="VARCHAR" />
+		<result column="alipay_name" property="alipayName" jdbcType="VARCHAR" />
+		<result column="obt_result_totals" property="payAmount" jdbcType="DECIMAL" />
+	</resultMap>
+	
+	<!-- 全部查询字段 -->
+	<sql id="Base_Column_List">
+		obt_id, obt_no, obt_start_time, obt_end_time, obt_order_totals,
+		obt_shipping_totals, obt_order_return_totals, obt_commis_totals,
+		obt_commis_return_totals, obt_store_cost_totals, obt_result_totals,
+		create_time, obt_state, obt_pay_time, obt_pay_content, obt_store_id,
+		obt_store_name
+	</sql>
+	
+	<!-- 结算管理总账单excel超类查询字段 -->
+	<sql id="ExcelVo_Column_List">
+		obt_order_totals,obt_shipping_totals, obt_order_return_totals, obt_commis_totals,
+		obt_commis_return_totals, obt_store_cost_totals, obt_result_totals,obt_store_name
+	</sql>
+	
+	<!-- 结算批量转账超类查询字段 -->
+	<sql id="BT_Column_List">
+		a.obt_no, a.obt_result_totals, b.alipay_account_number, b.alipay_name
+	</sql>
+	
+	<!-- 分页查询条件 -->
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition.obtStoreName != null and condition.obtStoreName != '' ">
+	          	and obt_store_name like
+				<if test="dbName == 'oracle'">'%'||#{condition.obtStoreName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{condition.obtStoreName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{condition.obtStoreName},'%')</if>
+	        </if>
+	        <if test="condition.obtStartTime != null">
+				and obt_start_time &gt;= #{condition.obtStartTime}
+			</if>
+			<if test="condition.obtEndTime != null">
+				and obt_end_time &lt;= #{condition.obtEndTime}
+			</if>
+			<if test="condition.startTime != null">
+				and create_time &gt;= #{condition.startTime}   
+			</if>
+			<if test="condition.endTime != null">
+				and create_time &lt; #{condition.endTime} 
+			</if>
+			<if test="condition.obtState != null">
+				and obt_state = #{condition.obtState}
+			</if>
+			<if test="condition.obtStoreId != null and condition.obtStoreId != ''">
+				and obt_store_id = #{condition.obtStoreId}
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 查询条件 -->
+	<sql id="whereStatement1">
+		<where>
+			1 = 1
+			<if test="obtStoreName != null and obtStoreName != '' ">
+	          	and obt_store_name like
+				<if test="dbName == 'oracle'">'%'||#{obtStoreName}||'%'</if>
+				<if test="dbName == 'mssql'">'%'+#{obtStoreName}+'%'</if>
+				<if test="dbName == 'mysql'">concat('%',#{obtStoreName},'%')</if>
+	        </if>
+	        <if test="obtStartTime != null">
+				and obt_start_time &gt;= #{obtStartTime}
+			</if>
+			<if test="obtEndTime != null">
+				and obt_end_time &lt;= #{obtEndTime}
+			</if>
+			<if test="startTime != null">
+				and create_time &gt;= #{startTime}   
+			</if>
+			<if test="endTime != null">
+				and create_time &lt; #{endTime} 
+			</if>
+			<if test="obtState != null">
+				and obt_state = #{obtState}
+			</if>
+			<if test="obtStoreId != null and obtStoreId != ''">
+				and obt_store_id = #{obtStoreId}
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 保存结算单汇总表 -->
+	<insert id="saveOrderBillTotal" parameterType="com.leimingtech.core.entity.base.OrderBillTotal" >
+		insert into shop_order_bill_total
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="obtId != null and obtId != ''">
+				obt_id,
+			</if>
+			<if test="obtNo != null and obtNo != '' ">
+				obt_no,
+			</if>
+			<if test="obtStartTime != null ">
+				obt_start_time,
+			</if>
+			<if test="obtEndTime != null ">
+				obt_end_time,
+			</if>
+			<if test="obtOrderTotals != null ">
+				obt_order_totals,
+			</if>
+			<if test="obtShippingTotals != null ">
+				obt_shipping_totals,
+			</if>
+			<if test="obtOrderReturnTotals != null ">
+				obt_order_return_totals,
+			</if>
+			<if test="obtCommisTotals != null ">
+				obt_commis_totals,
+			</if>
+			<if test="obtCommisReturnTotals != null ">
+				obt_commis_return_totals,
+			</if>
+			<if test="obtStoreCostTotals != null ">
+				obt_store_cost_totals,
+			</if>
+			<if test="obtResultTotals != null ">
+				obt_result_totals,
+			</if>
+			<if test="createTime != null ">
+				create_time,
+			</if>
+			<if test="obtState != null ">
+				obt_state,
+			</if>
+			<if test="obtPayTime != null ">
+				obt_pay_time,
+			</if>
+			<if test="obtPayContent != null and obtPayContent != '' ">
+				obt_pay_content,
+			</if>
+			<if test="obtStoreId != null and obtStoreId != ''">
+				obt_store_id,
+			</if>
+			<if test="obtStoreName != null and obtStoreName != '' ">
+				obt_store_name,				
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="obtId != null and obtId != ''">
+				#{obtId},
+			</if>
+			<if test="obtNo != null and obtNo != '' ">
+				#{obtNo},
+			</if>
+			<if test="obtStartTime != null ">
+				#{obtStartTime},
+			</if>
+			<if test="obtEndTime != null ">
+				#{obtEndTime},
+			</if>
+			<if test="obtOrderTotals != null ">
+				#{obtOrderTotals},
+			</if>
+			<if test="obtShippingTotals != null ">
+				#{obtShippingTotals},
+			</if>
+			<if test="obtOrderReturnTotals != null ">
+				#{obtOrderReturnTotals},
+			</if>
+			<if test="obtCommisTotals != null ">
+				#{obtCommisTotals},
+			</if>
+			<if test="obtCommisReturnTotals != null ">
+				#{obtCommisReturnTotals},
+			</if>
+			<if test="obtStoreCostTotals != null ">
+				#{obtStoreCostTotals},
+			</if>
+			<if test="obtResultTotals != null ">
+				#{obtResultTotals},
+			</if>
+			<if test="createTime != null ">
+				#{createTime},
+			</if>
+			<if test="obtState != null ">
+				#{obtState},
+			</if>
+			<if test="obtPayTime != null ">
+				#{obtPayTime},
+			</if>
+			<if test="obtPayContent != null and obtPayContent != '' ">
+				#{obtPayContent},
+			</if>
+			<if test="obtStoreId != null and obtStoreId != ''">
+				#{obtStoreId},
+			</if>
+			<if test="obtStoreName != null and obtStoreName != '' ">
+				#{obtStoreName},				
+			</if>
+		</trim>
+	</insert>
+	
+	<!-- 修改结算单汇总表 -->
+	<update id="updateOrderBillTotal" parameterType="com.leimingtech.core.entity.base.OrderBillTotal" >
+		update shop_order_bill_total
+		<set>
+			<if test="obtNo != null and obtNo != '' ">
+				obt_no = #{obtNo},
+			</if>
+			<if test="obtStartTime != null ">
+				obt_start_time = #{obtStartTime},
+			</if>
+			<if test="obtEndTime != null ">
+				obt_end_time = #{obtEndTime},
+			</if>
+			<if test="obtOrderTotals != null ">
+				obt_order_totals = #{obtOrderTotals},
+			</if>
+			<if test="obtShippingTotals != null ">
+				obt_shipping_totals = #{obtShippingTotals},
+			</if>
+			<if test="obtOrderReturnTotals != null ">
+				obt_order_return_totals = #{obtOrderReturnTotals},
+			</if>
+			<if test="obtCommisTotals != null ">
+				obt_commis_totals = #{obtCommisTotals},
+			</if>
+			<if test="obtCommisReturnTotals != null ">
+				obt_commis_return_totals = #{obtCommisReturnTotals},
+			</if>
+			<if test="obtStoreCostTotals != null ">
+				obt_store_cost_totals = #{obtStoreCostTotals},
+			</if>
+			<if test="obtResultTotals != null ">
+				obt_result_totals = #{obtResultTotals},
+			</if>
+			<if test="createTime != null ">
+				create_time = #{createTime},
+			</if>
+			<if test="obtState != null ">
+				obt_state = #{obtState},
+			</if>
+			<if test="obtPayTime != null ">
+				obt_pay_time = #{obtPayTime},
+			</if>
+			<if test="obtPayContent != null and obtPayContent != '' ">
+				obt_pay_content = #{obtPayContent},
+			</if>
+			<if test="obtStoreId != null  and obtStoreId != ''">
+				obt_store_id = #{obtStoreId},
+			</if>
+			<if test="obtStoreName != null and obtStoreName != '' ">
+				obt_store_name = #{obtStoreName},				
+			</if>
+		</set>
+		where obt_id = #{obtId}
+	</update>
+	
+	<!-- 通过id查询结算单汇总表 -->
+	<select id="findOrderBillTotalById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/> from shop_order_bill_total where obt_id = #{obtId}
+	</select>
+	
+	<!-- 根据总账单编号查询总账单 -->
+	<select id="findOrderBillTotalByObtNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/> from shop_order_bill_total where obt_no = #{obtNo}		
+	</select>
+	
+	<!-- 查询分页结算单汇总表数据 -->
+	<select id="findOrderBillTotalPagerList" parameterType="com.leimingtech.service.utils.page.Pager" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List"/> from shop_order_bill_total
+		<include refid="whereStatement"/>
+		order by obt_store_id asc, create_time desc
+	</select>
+	
+	<!-- 询结算单汇总表excel数据 -->
+	<select id="findTotalExcelVo" parameterType="com.leimingtech.core.entity.base.OrderBillTotal" resultMap="TotalExcelVoMap">
+		select <include refid="ExcelVo_Column_List"/> from shop_order_bill_total
+		<include refid="whereStatement1"/>
+		order by obt_store_id asc, create_time desc
+	</select>
+	
+	<!-- 根据结算总账单id信息查询结算批量转账所需信息 -->
+	<select id="findBulkTransferVoByIds" parameterType="java.lang.String" resultMap="BulkTransferMap" >
+		select <include refid="BT_Column_List" /> from shop_order_bill_total a join shop_store b on a.obt_store_id = b.store_id
+		where a.obt_id in (${obtIds});
+	</select>
+	
+</mapper>

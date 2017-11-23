@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.trade.dao.mapper.TransportMapper">
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.Transport">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="send_tpl_id" property="sendTplId" jdbcType="INTEGER"/>
+        <result column="store_id" property="storeId" jdbcType="VARCHAR"/>
+        <result column="is_del" property="isDel" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="is_default" property="isDefault"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, title, send_tpl_id, store_id, is_del,create_time,update_time,is_default
+    </sql>
+
+    <insert id="save" parameterType="com.leimingtech.core.entity.Transport">
+        INSERT INTO shop_transport(id, title, send_tpl_id, store_id,create_time,update_time,is_default)
+        VALUES(#{id},#{title},#{sendTplId},#{storeId},#{createTime},#{updateTime},#{isDefault})
+    </insert>
+
+    <select id="findById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_transport where id=#{id}
+    </select>
+
+    <select id="getDefTransportByStoreId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop_transport
+        where store_id= #{storeId} and is_del = 0 and is_default = 1
+    </select>
+
+    <sql id="pageWhere">
+        <where>
+            1=1
+            <if test="condition.storeId != null and condition.storeId != ''">
+                AND store_id= #{condition.storeId}
+            </if>
+            <if test="condition.isDefault != null">
+                AND is_default= #{condition.isDefault}
+            </if>
+        </where>
+    </sql>
+
+    <!--查询分页列表-->
+    <select id="queryList" parameterType="com.leimingtech.service.utils.page.Pager" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop_transport
+        <include refid="pageWhere"/>
+        and is_del = 0
+    </select>
+
+    <update id="delete" parameterType="java.lang.String">
+        update shop_transport
+          set is_del = 1
+        where id = #{id}
+    </update>
+
+    <update id="update" parameterType="com.leimingtech.core.entity.Transport">
+        update shop_transport
+        <set>
+            <if test="title != null">
+                title=#{title},
+            </if>
+            <if test="isDefault != null">
+                is_default=#{isDefault},
+            </if>
+            update_time=#{updateTime}
+        </set>
+        where
+        store_id=#{storeId}
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+    </update>
+</mapper>

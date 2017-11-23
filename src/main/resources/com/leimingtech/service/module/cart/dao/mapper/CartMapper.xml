@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.cart.dao.mapper.CartMapper">
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.Cart">
+        <result column="cart_id" property="cartId" jdbcType="VARCHAR" />
+        <result column="member_id" property="memberId" jdbcType="VARCHAR" />
+        <result column="store_id" property="storeId" jdbcType="VARCHAR" />
+        <result column="store_name" property="storeName" jdbcType="VARCHAR" />
+        <result column="goods_id" property="goodsId" jdbcType="VARCHAR" />
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR" />
+        <result column="goods_store_price" property="goodsPrice" jdbcType="DOUBLE" />
+        <result column="goods_num" property="goodsNum" jdbcType="INTEGER" />
+        <result column="goods_images" property="goodsImages" jdbcType="VARCHAR" />
+        <result column="spec_id" property="specId" jdbcType="VARCHAR" />
+        <result column="spec_info" property="specInfo" jdbcType="VARCHAR" />
+    	<result column="first_gc_id" property="firstGcId" jdbcType="VARCHAR"/>
+    	<result column="goods_now_storage" property="goodsNowStorage" jdbcType="INTEGER"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+      	cart_id,member_id,store_id,store_name,goods_id,goods_name,goods_store_price,goods_num,
+      	goods_images,spec_id,spec_info,first_gc_id
+    </sql>
+    
+    <!-- 通过用户id查询购物车,同时可以传入商品的id和规格id查询存在相同商品 -->
+    <select id="queryBuyCart" resultMap="BaseResultMap" parameterType="com.leimingtech.core.entity.base.Cart">
+        select
+        a.cart_id,a.member_id,a.store_id,a.store_name,a.goods_id,a.goods_name,a.goods_store_price,a.goods_num,
+        a.goods_images,a.spec_id,a.spec_info,a.first_gc_id, b.spec_goods_storage AS goods_now_storage
+        from shop_cart a
+        LEFT JOIN shop_goods_spec b ON b.goods_spec_id = a.spec_id
+         where 1=1
+         and a.member_id=#{memberId,jdbcType=VARCHAR}
+        <if test="goodsId != null and goodsId != '' ">
+			and a.goods_id = #{goodsId,jdbcType=VARCHAR}
+		</if>
+		<if test="specId != null and specId != '' ">
+			and a.spec_id = #{specId,jdbcType=VARCHAR}
+		</if>
+    </select>
+    
+    <!-- 保存购物车 -->
+    <insert id="saveCart" parameterType="com.leimingtech.core.entity.base.Cart" keyProperty="cartId">
+		INSERT INTO shop_cart
+		( cart_id,member_id,store_id,store_name,goods_id,goods_name,goods_store_price,goods_num,
+      	goods_images,spec_id,spec_info,first_gc_id)
+		VALUES
+		(#{cartId},#{memberId},#{storeId},#{storeName},#{goodsId},#{goodsName},#{goodsPrice},
+		#{goodsNum},#{goodsImages},#{specId},#{specInfo},#{firstGcId})
+	</insert>
+
+    <!-- 批量保存购物车 -->
+    <insert id="saveCarts" parameterType="java.util.List" >
+        INSERT INTO shop_cart
+        ( cart_id,member_id,store_id,store_name,goods_id,goods_name,goods_store_price,goods_num,
+        goods_images,spec_id,spec_info,first_gc_id)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.cartId},#{item.memberId},#{item.storeId},#{item.storeName},#{item.goodsId},#{item.goodsName},#{item.goodsPrice},
+            #{item.goodsNum},#{item.goodsImages},#{item.specId},#{item.specInfo},#{item.firstGcId})
+        </foreach>
+    </insert>
+	
+	<!-- 修改购物车 -->
+    <select id="updateCart" parameterType="com.leimingtech.core.entity.base.Cart">
+		update shop_cart
+		set 
+		 	member_id = #{memberId,jdbcType=VARCHAR},
+	       	store_id = #{storeId,jdbcType=VARCHAR},
+	       	store_name =  #{storeName,jdbcType=VARCHAR},
+	       	goods_id =  #{goodsId,jdbcType=VARCHAR},
+	       	goods_name =  #{goodsName,jdbcType=VARCHAR},
+	       	goods_store_price =  #{goodsPrice,jdbcType=DOUBLE},
+	       	goods_num =  #{goodsNum,jdbcType=INTEGER},
+	       	goods_images =  #{goodsImages,jdbcType=VARCHAR},
+	       	spec_id = #{specId,jdbcType=VARCHAR},
+	       	spec_info = #{specInfo,jdbcType=VARCHAR},
+	       	first_gc_id = #{firstGcId,jdbcType=VARCHAR}
+	     where cart_id = #{cartId,jdbcType=VARCHAR}
+	</select>
+    
+    <!-- 删除购物车 -->
+    <delete id="deleteCart" parameterType="java.lang.String">
+    	delete from shop_cart
+    	where cart_id = #{cartId,jdbcType=VARCHAR}
+    </delete>
+
+    <!-- 根据用户id,商品id,商品规格id删除购物车 -->
+    <delete id="deleteByMGS">
+    	delete from shop_cart 
+    	where member_id = #{0}
+    		and goods_id = #{1}
+    		and spec_id = #{2}
+    </delete>
+    
+    <!-- 清空购物车 -->
+    <delete id="deleteAllCartByMemberId" parameterType="java.lang.String">
+    	delete from shop_cart where member_id = #{memberId}
+    </delete>
+ 
+    <!-- 修改购物车数量 -->
+    <select id="updateCartNum" parameterType="com.leimingtech.core.entity.base.Cart">
+		update shop_cart 
+		set 
+			goods_num =  #{goodsNum,jdbcType=INTEGER}
+	     where cart_id = #{cartId,jdbcType=VARCHAR}
+	</select>
+    
+    <!-- 购物车下单  根据用户id和cartids 查询商品 根据店铺id,和商品一级分类id排序-->
+    <select id="queryByCartIds" resultMap="BaseResultMap" parameterType="com.leimingtech.core.entity.base.Cart">
+        select
+        <include refid="Base_Column_List" />
+        from shop_cart where member_id=#{memberId}
+        <if test="cartIds != null">
+			and cart_id in (${cartIds})  
+		</if>
+		order by store_id,first_gc_id
+    </select>
+    
+    <!-- 根据cartid 查询商品 -->
+    <select id="queryCartById" resultMap="BaseResultMap" parameterType="java.lang.String">
+    	select
+        <include refid="Base_Column_List" />
+        from shop_cart where cart_id=#{cartId}
+    </select>
+    
+    <!-- 根据用户id和店铺id查询购物车 -->
+    <select id="queryCartByStoreId" resultMap="BaseResultMap">
+    	select
+        <include refid="Base_Column_List" />
+        from shop_cart where member_id = #{0}
+        and store_id = #{1}
+    </select>
+    
+    <!-- 查询用户购物车数量 -->
+    <select id="queryCountByMemberId" parameterType="java.lang.String" resultType="Integer">
+    	select sum(goods_num) from shop_cart where member_id = #{memberId}
+    </select>
+    
+</mapper>

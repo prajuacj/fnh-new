@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leimingtech.service.module.sellermenu.dao.mapper.ShopSellerMenuMapper">
+	
+	<resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.ShopSellerMenu">
+		<result column="m_id" property="menuId" jdbcType="VARCHAR" />
+		<result column="m_name" property="menuName" jdbcType="VARCHAR" />
+		<result column="m_url" property="menuUrl" jdbcType="VARCHAR" />
+		<result column="m_parent_id" property="menuParentId" jdbcType="VARCHAR" />
+		<result column="m_sort" property="menuSort" jdbcType="INTEGER" />
+		<result column="m_level" property="menuLevel" jdbcType="INTEGER" />
+		<result column="m_path" property="menuPath" jdbcType="VARCHAR" />
+		<result column="m_description" property="menuDescription" jdbcType="VARCHAR" />
+		<result column="m_permission" property="menuPermission" jdbcType="VARCHAR" />
+		<result column="m_isshow" property="menuIsshow" jdbcType="INTEGER" />
+		<collection property="shopSellerMenuList" ofType="com.leimingtech.core.entity.base.ShopSellerMenu"
+	        column="id" javaType="arraylist"
+			select="com.leimingtech.service.module.sellermenu.dao.mapper.ShopSellerMenuMapper.findShopSellerMenuListByPid">
+        </collection>
+	</resultMap>
+    
+    <resultMap id="BaseResultMap1" type="com.leimingtech.core.entity.vo.ShopSellerMenuVo" >
+        <id column="m_id" property="menuId" jdbcType="VARCHAR" />
+        <result column="has_child" property="hasChild" jdbcType="INTEGER" />
+        <result column="m_name" property="menuName" jdbcType="VARCHAR" />
+        <result column="m_url" property="menuUrl" jdbcType="VARCHAR" />
+        <result column="m_parent_id" property="menuParentId" jdbcType="VARCHAR" />
+        <result column="m_sort" property="menuSort" jdbcType="INTEGER" />
+        <result column="m_level" property="menuLevel" jdbcType="INTEGER" />
+        <result column="m_path" property="menuPath" jdbcType="VARCHAR" />
+        <result column="m_description" property="menuDescription" jdbcType="VARCHAR" />
+        <result column="m_isshow" property="menuIsshow" jdbcType="INTEGER" />
+        <result column="m_permission" property="menuPermission" jdbcType="INTEGER" />
+    </resultMap>
+    
+	<sql id="Base_Column_List">
+		m_id,
+		m_name,
+		m_url,
+		m_parent_id,
+		m_sort,
+		m_level,
+		m_path,
+		m_description,
+		m_permission,
+		m_isshow
+	</sql>
+	
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+			</if>
+		</where>
+	</sql>
+
+	<sql id="orderSort">
+		order by s.m_sort desc
+	</sql>
+
+	<select id="findShopSellerMenuPagerList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.service.utils.page.Pager">
+		select c.* from shop_seller_menu c
+		<include refid="whereStatement" />
+	</select>
+	
+	<!-- 获取账户可见菜单 -->
+	<select id="findShowMenuList" resultMap="BaseResultMap">
+		SELECT * from shop_seller_menu where m_isshow = 1
+	</select>
+	
+	<!-- 通过权限列表获取菜单列表 -->
+	<select id="findShopSellerMenuListByMenuIds" resultMap="BaseResultMap">
+		select * from shop_seller_menu where 1=1
+		<if test = "limits != null">
+			and m_id in (${limits})
+		</if>
+		<if test = "menuIsshow != null">
+			and m_isshow = #{menuIsshow}
+		</if>
+		and m_parent_id != '0'
+	</select>
+	
+	<select id="findShopSellerChildMenu" resultMap="BaseResultMap">
+		select * from shop_seller_menu where 1=1
+		<if test = "limits != null">
+			and m_parent_id in (${limits})
+		</if>
+	</select>
+	
+	<!-- 获取父菜单 -->
+	<select id="findShopSellerParentMenu" resultMap="BaseResultMap">
+		select * from shop_seller_menu where 1=1
+		<if test = "limits != null">
+			and m_id in (SELECT
+			m_parent_id
+			FROM
+			shop_seller_menu
+			WHERE
+			m_id IN (${limits}))
+		</if>
+		AND m_parent_id = '0'
+	</select>
+	<select id="findPageList" resultMap="BaseResultMap1">
+        SELECT
+        <include refid="Base_Column_List" />,
+        (select count(1) from shop_seller_menu s1 where s1.m_parent_id=s.m_id) has_child
+        FROM shop_seller_menu s
+        where  s.m_parent_id = '0' <include refid="orderSort"/>
+    </select>
+	
+	<!--根据parentId，得到id plash-->
+    <select id="findbyparentid" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT m_parent_id
+        FROM shop_seller_menu
+        where m_id = #{menuParentId}
+    </select>
+	
+	<select id="findShopSellerMenuAllList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.core.entity.base.ShopSellerMenu">
+		SELECT
+		<include refid="Base_Column_List" />
+		from shop_seller_menu c
+	</select>
+	
+	<select id="findChildList" resultMap="BaseResultMap1" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List" />,
+        (select count(*) from shop_seller_menu s1 where s1.m_parent_id=s.m_id) has_child
+        FROM shop_seller_menu s
+        where  m_parent_id = #{menuParentId}
+    </select>
+    
+	<select id="findChild" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM shop_seller_menu
+        where  m_parent_id = #{menuId}  order by m_sort desc
+    </select>
+	
+	<!--判断是否有其它菜单以本Id，为父id-->
+     <select id="findparentidCount" parameterType="java.lang.String" resultType="int">
+        select count(*) from shop_seller_menu where  m_parent_id = #{menuId}
+     </select>
+	
+	<select id="findShopSellerMenuByMId" resultMap="BaseResultMap" parameterType="java.lang.String">
+		select
+		<include refid="Base_Column_List" />
+		from shop_seller_menu c where m_id = #{menuId}
+
+	</select>
+	
+	<select id="findShopSellerMenuListByPid" resultMap="BaseResultMap" parameterType="java.lang.String">
+		SELECT
+		<include refid="Base_Column_List" />
+		from shop_seller_menu c
+		where  m_parent_id = #{menuId}
+		order by m_sort desc
+	</select>
+	
+	<delete id="deleteShopSellerMenuByMId" parameterType="java.lang.String">
+		delete from
+		shop_seller_menu where m_id = #{menuId}
+	</delete>
+	
+	<insert id="saveShopSellerMenu" parameterType="com.leimingtech.core.entity.base.ShopSellerMenu" keyProperty="menuId">
+
+		insert into shop_seller_menu
+
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="menuId != null and menuId != ''">
+			m_id,
+			</if>
+			<if test="menuName != null and menuName != ''">
+			m_name,
+			</if>
+			<if test="menuUrl != null and menuUrl != ''">
+			m_url,
+			</if>
+			<if test="menuParentId != null and menuParentId != ''">
+			m_parent_id,
+			</if>
+			<if test="menuSort != null">
+			m_sort,
+			</if>
+			<if test="menuLevel != null ">
+			m_level,
+			</if>
+			<if test="menuPath != null and menuPath != ''">
+			m_path,
+			</if>
+			<if test="menuDescription != null and menuDescription != ''">
+			m_description,
+			</if>
+			<if test="menuPermission != null and menuPermission != ''">
+			m_permission,
+			</if>
+			<if test="menuIsshow != null ">
+			m_isshow
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="menuId != null and menuId != ''">
+				#{menuId},
+			</if>
+			<if test="menuName != null and menuName != ''">
+				#{menuName},
+			</if>
+			<if test="menuUrl != null and menuUrl != ''">
+				#{menuUrl},
+			</if>
+			<if test="menuParentId != null and menuParentId != ''">
+				#{menuParentId},
+			</if>
+			<if test="menuSort != null">
+				#{menuSort},
+			</if>
+			<if test="menuLevel != null ">
+				#{menuLevel},
+			</if>
+			<if test="menuPath != null and menuPath != ''">
+				#{menuPath},
+			</if>
+			<if test="menuDescription != null and menuDescription != ''">
+				#{menuDescription},
+			</if>
+			<if test="menuPermission != null and menuPermission != ''">
+				#{menuPermission},
+			</if>
+			<if test="menuIsshow != null ">
+				#{menuIsshow}
+			</if>
+		</trim>
+
+	</insert>
+	
+	<update id="updateShopSellerMenu" parameterType="com.leimingtech.core.entity.base.ShopSellerMenu">
+
+		update shop_seller_menu
+		<set>
+			<if test="menuId != null and menuId != ''">
+				m_id = #{menuId},
+			</if>
+			<if test="menuName != null and menuName != ''">
+				m_name = #{menuName},
+			</if>
+			<if test="menuUrl != null and menuUrl != ''">
+				m_url = #{menuUrl},
+			</if>
+			<if test="menuParentId != null and menuParentId != ''">
+				m_parent_id = #{menuParentId},
+			</if>
+			<if test="menuSort != null">
+				m_sort = #{menuSort},
+			</if>
+			<if test="menuLevel != null ">
+				m_level = #{menuLevel},
+			</if>
+			<if test="menuPath != null and menuPath != ''">
+				m_path = #{menuPath},
+			</if>
+			<if test="menuDescription != null and menuDescription != ''">
+				m_description = #{menuDescription},
+			</if>
+			<if test="menuPermission != null and menuPermission != ''">
+				m_permission = #{menuPermission},
+			</if>
+			<if test="menuIsshow != null ">
+				m_isshow = #{menuIsshow}
+			</if>
+		</set>
+
+		WHERE m_id = #{menuId}
+
+	</update>
+	
+</mapper>

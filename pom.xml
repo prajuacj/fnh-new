@@ -1,0 +1,84 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>com.gofar.fnh-new.service</artifactId>
+    <groupId>com.gofar.fnh-new</groupId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
+  <groupId>com.gofar.fnh-new.service</groupId>
+  <artifactId>com.gofar.fnh-new.serivce.leiming</artifactId>
+  <name>leiming service</name>
+  <description>leiming service impl</description>
+  
+  <dependencies>
+    	<dependency>
+        	<groupId>com.gofar.fnh-new.core</groupId>
+        	<artifactId>com.gofar.fnh-new.core.leiming</artifactId>
+        	<version>0.0.1-SNAPSHOT</version>
+    	</dependency>
+    	<dependency>
+        	<groupId>com.gofar.fnh-new.api</groupId>
+        	<artifactId>com.gofar.fnh-new.api.leiming-front</artifactId>
+        	<version>0.0.1-SNAPSHOT</version>
+    	</dependency>
+    	<dependency>
+        	<groupId>com.gofar.fnh-new</groupId>
+        	<artifactId>com.gofar.fnh-new.common</artifactId>
+        	<version>0.0.1-SNAPSHOT</version>
+    	</dependency>
+    
+    
+    	<dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+	    <dependency>
+	      <groupId>junit</groupId>
+	      <artifactId>junit</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency>
+	       <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+	      <scope>test</scope>
+	    </dependency>
+	    <dependency> 
+         	<groupId>org.apache.httpcomponents</groupId> 
+          	<artifactId>httpclient</artifactId> 
+        </dependency> 
+        <dependency> 
+         	<groupId>org.apache.httpcomponents</groupId> 
+          	<artifactId>httpclient-cache</artifactId> 
+        </dependency> 
+        <dependency> 
+         	<groupId>org.apache.httpcomponents</groupId> 
+         	<artifactId>httpmime</artifactId> 
+	  	</dependency>
+	    <dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.apache.lucene</groupId>
+		  <artifactId>lucene-facet</artifactId>
+		  <version>5.0.0</version>
+		</dependency>
+		
+  </dependencies>
+  
+  <build>
+        <finalName>leimingtech-service</finalName>
+   </build>
+</project>

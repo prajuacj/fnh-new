@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.trade.dao.mapper.PaymentTallyMapper">
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.PaymentTally">
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="payment_code" property="paymentCode" jdbcType="VARCHAR" />
+        <result column="payment_name" property="paymentName" jdbcType="VARCHAR" />
+        <result column="payment_state" property="paymentState" jdbcType="INTEGER" />
+        <result column="payment_sn" property="paymentSn" jdbcType="VARCHAR" />
+        <result column="payment_from" property="paymentFrom" jdbcType="INTEGER" />
+        <result column="payment_amount" property="paymentAmount" jdbcType="DECIMAL" />
+        <result column="trade_type" property="tradeType" jdbcType="INTEGER" />
+        <result column="trade_sn" property="tradeSn" jdbcType="VARCHAR" />
+        <result column="buyer_id" property="buyerId" jdbcType="VARCHAR" />
+        <result column="buyer_name" property="buyerName" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="BIGINT" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, payment_code, payment_name, payment_state, payment_sn, payment_from,payment_amount,trade_type,
+        trade_sn,buyer_id,buyer_name,create_time
+    </sql>
+
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition.paymentCode != null and condition.paymentCode != '' ">
+                and payment_code = #{condition.paymentCode}
+            </if>
+            <if test="condition.paymentName != null and condition.paymentName != '' ">
+                and payment_name LIKE
+                <if test="dbName == 'oracle'">'%'||#{condition.paymentName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.paymentName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{condition.paymentName},'%')</if>
+            </if>
+            <if test="condition.paymentState != null ">
+                and payment_state = #{condition.paymentState}
+            </if>
+            <if test="condition.paymentSn != null and condition.paymentSn != '' ">
+                and payment_sn LIKE
+                <if test="dbName == 'oracle'">'%'||#{condition.paymentSn}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.paymentSn}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{condition.paymentSn},'%')</if>
+            </if>
+            <if test="condition.paymentFrom != null ">
+                and payment_from = #{condition.paymentFrom}
+            </if>
+            <if test="condition.tradeType != null ">
+                and trade_type = #{condition.tradeType}
+            </if>
+            <if test="condition.tradeSn != null and condition.tradeSn != '' ">
+                and trade_sn LIKE
+                <if test="dbName == 'oracle'">'%'||#{condition.tradeSn}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.tradeSn}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{condition.tradeSn},'%')</if>
+            </if>
+            <if test="condition.startTime != null and condition.startTime != '' ">
+                and create_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != '' ">
+                and create_time &lt; #{condition.endTime}
+            </if>
+        </where>
+    </sql>
+
+    <!-- 保存支付流水表 -->
+    <insert id="savePaymentTally" parameterType="com.leimingtech.core.entity.base.PaymentTally">
+        INSERT INTO shop_payment_tally
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id, payment_code, payment_name, payment_state, payment_sn, payment_from,payment_amount,trade_type,
+            trade_sn,buyer_id,buyer_name,create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{id}, #{paymentCode}, #{paymentName}, #{paymentState}, #{paymentSn}, #{paymentFrom},#{paymentAmount},
+            #{tradeType},#{tradeSn},#{buyerId},#{buyerName},#{createTime}
+        </trim>
+    </insert>
+
+    <!-- 修改支付流水表 -->
+    <update id="updatePaymentTally" parameterType="com.leimingtech.core.entity.base.PaymentTally">
+        UPDATE shop_payment_tally
+        <set>
+            <if test="paymentCode != null and paymentCode != '' ">
+                payment_code = #{paymentCode},
+            </if>
+            <if test="paymentName != null and paymentName != '' ">
+                payment_name = #{paymentName},
+            </if>
+            <if test="paymentState != null ">
+                payment_state = #{paymentState},
+            </if>
+            <if test="paymentSn != null and paymentSn != '' ">
+                payment_sn = #{paymentSn},
+            </if>
+            <if test="paymentFrom != null ">
+                payment_from = #{paymentFrom},
+            </if>
+            <if test="tradeType != null ">
+                trade_type = #{tradeType},
+            </if>
+            <if test="tradeSn != null and tradeSn != '' ">
+                trade_sn = #{tradeSn},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+        </set>
+         where payment_sn=#{paymentSn} and create_time =
+		    (select max(create_time) from
+		    	(select st2.create_time from shop_payment_tally st2 where st2.payment_sn=#{paymentSn})as spt
+		    )
+    </update>
+
+    <!-- 通过id删除支付流水表 -->
+    <delete id="deletePaymentTally" parameterType="java.lang.String">
+        DELETE FROM shop_payment_tally WHERE id = #{id}
+    </delete>
+
+    <!-- 通过id查询支付流水表 -->
+    <select id="findPaymentTallyById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM shop_payment_tally WHERE id = #{id}
+    </select>
+    
+    <!-- 通过id和支付单号查询支付流水表 -->
+    <select id="findPaymentTally" parameterType="com.leimingtech.core.entity.base.PaymentTally" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM shop_payment_tally
+        where payment_sn=#{paymentSn} and create_time =
+        (select max(create_time) from
+               (select st2.create_time from shop_payment_tally st2 where st2.payment_sn=#{paymentSn})as spt
+        )
+    </select>
+
+    <!-- 分页查询支付流水信息 -->
+    <select id="findPagerList" parameterType="com.leimingtech.service.utils.page.Pager" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM shop_payment_tally
+        <include refid="whereStatement"/> order by create_time desc
+    </select>
+</mapper>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.trade.dao.mapper.ConsultMapper">
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.Consult">
+        <id column="consult_id" property="consultId" jdbcType="VARCHAR"/>
+        <result column="goods_id" property="goodsId" jdbcType="VARCHAR"/>
+        <result column="cgoods_name" property="cgoodsName" jdbcType="VARCHAR"/>
+        <result column="member_id" property="memberId" jdbcType="VARCHAR"/>
+        <result column="cmember_name" property="cmemberName" jdbcType="VARCHAR"/>
+        <result column="store_id" property="storeId" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="consult_content" property="consultContent" jdbcType="VARCHAR"/>
+        <result column="consult_addtime" property="consultAddtime" jdbcType="BIGINT"/>
+        <result column="consult_reply" property="consultReply" jdbcType="VARCHAR"/>
+        <result column="consult_reply_time" property="consultReplyTime" jdbcType="BIGINT"/>
+        <result column="isanonymous" property="isanonymous" jdbcType="TINYINT"/>
+        <result column="is_del" property="isDel" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="update_time" property="updateTime" jdbcType="BIGINT"/>
+        <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
+        <result column="goods_Image" property="goodsImage" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        cs.consult_id, cs.goods_id, cs.cgoods_name, cs.member_id, cs.cmember_name, cs.store_id, cs.email, cs.consult_content,
+        cs.consult_addtime, cs.consult_reply, cs.consult_reply_time, cs.isanonymous, cs.is_del, cs.create_time, cs.update_time,ss.store_name
+    </sql>
+
+    <sql id="Base_Column_List2">
+        cs.consult_id, cs.goods_id, cs.cgoods_name, cs.member_id, cs.cmember_name, cs.store_id, cs.email, cs.consult_content,
+        cs.consult_addtime, cs.consult_reply, cs.consult_reply_time, cs.isanonymous, cs.is_del, cs.create_time,go.goods_image
+    </sql>
+
+    <sql id="whereStatement">
+        <where>
+            cs.is_del = 0
+            <if test="condition.storeId != null and condition.storeId != ''">
+                and cs.store_id = #{condition.storeId}
+            </if>
+            <if test="condition.goodsId != null and condition.goodsId != ''">
+                and cs.goods_id = #{condition.goodsId}
+            </if>
+            <if test="condition.cmemberName != null and condition.cmemberName != ''">
+                and cs.cmember_name like
+                <if test="dbName == 'oracle'">'%'||#{condition.cmemberName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.cmemberName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{condition.cmemberName},'%')</if>
+            </if>
+            <if test="condition.consultContent != null and condition.consultContent != ''">
+                and cs.consult_content like
+                <if test="dbName == 'oracle'">'%'||#{condition.consultContent}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.consultContent}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{condition.consultContent},'%')</if>
+            </if>
+            <if test="condition.memberId != null and condition.memberId != ''">
+                and cs.member_id = #{condition.memberId}
+            </if>
+            <if test="condition.replyStatus != null and condition.replyStatus == 0">
+                and (cs.consult_reply is null or cs.consult_reply = '')
+            </if>
+            <if test="condition.replyStatus != null and condition.replyStatus == 1">
+                and	(cs.consult_reply is not null or cs.consult_reply != '') 
+            </if>
+        </where>
+    </sql>
+
+    <sql id="whereStatement2">
+        <where>
+            cs.is_del = 0
+            <if test="goodsId != null and goodsId != ''">
+                and cs.goods_id = #{goodsId}
+            </if>
+            <if test="cmemberName != null and cmemberName != ''">
+                and cs.cmember_name like
+                <if test="dbName == 'oracle'">'%'||#{cmemberName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{cmemberName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{cmemberName},'%')</if>
+            </if>
+            <if test="consultContent != null and consultContent != ''">
+                and cs.consult_content like
+                <if test="dbName == 'oracle'">'%'||#{consultContent}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{consultContent}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{consultContent},'%')</if>
+            </if>
+            <if test="memberId != null and memberId != ''">
+                and cs.member_id = #{memberId}
+            </if>
+        </where>
+    </sql>
+
+    <select id="findList" resultMap="BaseResultMap" parameterType="com.leimingtech.service.utils.page.Pager">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM shop_consult cs left join shop_store ss on cs.store_id = ss.store_id
+        <include refid="whereStatement"/>
+        order by cs.consult_addtime DESC
+    </select>
+
+    <select id="findCount" parameterType="com.leimingtech.core.entity.base.Consult" resultType="int">
+        SELECT count(1)
+        FROM shop_consult cs left join shop_store ss on cs.store_id = ss.store_id
+        <include refid="whereStatement2"/>
+    </select>
+
+
+    <select id="findMemberList" resultMap="BaseResultMap" parameterType="com.leimingtech.service.utils.page.Pager">
+        SELECT
+        <include refid="Base_Column_List2"/>
+        FROM shop_consult cs  LEFT JOIN shop_goods go ON cs.goods_id = go.goods_id
+        <include refid="whereStatement"/>
+        order by cs.consult_addtime DESC
+    </select>
+
+    <select id="findMemberCount" parameterType="com.leimingtech.core.entity.base.Consult" resultType="int">
+        SELECT count(1)
+        FROM shop_consult cs
+        <include refid="whereStatement2"/>
+    </select>
+
+    <select id="findById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT * FROM shop_consult where consult_id = #{id}
+    </select>
+
+    <update id="delete" parameterType="java.lang.String">
+        update shop_consult set is_del = 1 where consult_id = #{id}
+    </update>
+
+    <insert id="save" parameterType="com.leimingtech.core.entity.base.Consult">
+        insert into shop_consult (consult_id,goods_id,cgoods_name,member_id,cmember_name,store_id,consult_content
+        ,consult_addtime,isanonymous,is_del,create_time)
+        values (#{consultId},#{goodsId},#{cgoodsName},#{memberId},#{cmemberName},#{storeId},#{consultContent},
+        #{consultAddtime},#{isanonymous},0,#{createTime})
+    </insert>
+
+    <update id="updateReply" parameterType="com.leimingtech.core.entity.base.Consult">
+        update shop_consult
+        set update_time = #{updateTime},
+        consult_reply = #{consultReply},
+        <if test="consultReplyTime!=null">
+            consult_reply_time = #{consultReplyTime}
+        </if>
+        where consult_id = #{consultId}
+    </update>
+</mapper>

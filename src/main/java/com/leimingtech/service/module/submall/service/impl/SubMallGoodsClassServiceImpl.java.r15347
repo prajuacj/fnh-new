@@ -1,0 +1,141 @@
+package com.leimingtech.service.module.submall.service.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.leimingtech.core.entity.GoodsClass;
+import com.leimingtech.core.entity.base.Goods;
+import com.leimingtech.core.entity.base.GoodsCombinHaoHuo;
+import com.leimingtech.core.entity.base.SubMall;
+import com.leimingtech.core.entity.base.SubMallGoodsClass;
+import com.leimingtech.core.entity.vo.AreaCategoryVo;
+import com.leimingtech.core.entity.vo.CategoryVo;
+import com.leimingtech.core.entity.vo.IndexHaohuoGoodsVo;
+import com.leimingtech.core.entity.vo.SubCategoryVo;
+import com.leimingtech.service.module.submall.dao.mapper.GoodsCombinHaohuoMapper;
+import com.leimingtech.service.module.submall.dao.mapper.SubMallGoodsClassMapper;
+import com.leimingtech.service.module.submall.service.SubMallGoodsClassService;
+import com.leimingtech.service.utils.page.Pager;
+
+@Service
+public class SubMallGoodsClassServiceImpl implements SubMallGoodsClassService {
+	
+	@Resource
+	private SubMallGoodsClassMapper subMallGoodsClassMapper;
+	
+	@Resource
+	private GoodsCombinHaohuoMapper goodsCombinHaohuoMapper;
+	
+	@Override
+	public List<CategoryVo> queryBySubMallId(String subMallId) throws Exception {
+		return subMallGoodsClassMapper.queryBySubMallId(subMallId);
+	}
+
+	@Override
+	public List<GoodsCombinHaoHuo> queryHaohuo() throws Exception {
+		return goodsCombinHaohuoMapper.queryHaohuo();
+	}
+
+	@Override
+	public List<SubCategoryVo> querySubCategoryBysgId(String smGcId)
+			throws Exception {
+		return subMallGoodsClassMapper.querySubCategoryBysgId(smGcId);
+	}
+
+	@Override
+	public List<AreaCategoryVo> queryAreaCategoryBysgId(String smGcId)
+			throws Exception {
+		return subMallGoodsClassMapper.queryAreaCategoryBysgId(smGcId);
+	}
+
+	@Override
+	public AreaCategoryVo queryAreaCategoryById(String areaCategoryId)
+			throws Exception {
+		return subMallGoodsClassMapper.queryAreaCategoryById(areaCategoryId);
+	}
+
+	@Override
+	public List<Goods> queryGoodsByAreaCategoryId(String areaCategoryId)
+			throws Exception {
+		return subMallGoodsClassMapper.queryGoodsByAreaCategoryId(areaCategoryId);
+	}
+
+	@Override
+	public GoodsCombinHaoHuo queryHaohuoById(String combinCode)
+			throws Exception {
+		return goodsCombinHaohuoMapper.queryHaohuoById(combinCode);
+	}
+
+	@Override
+	public List<Goods> queryGoodsByHaohuoId(String combinCode) throws Exception {
+		return goodsCombinHaohuoMapper.queryGoodsByHaohuoId(combinCode);
+	}
+
+	@Override
+	public SubCategoryVo querySubCategoryById(String subCategoryId)
+			throws Exception {
+		return subMallGoodsClassMapper.querySubCategoryById(subCategoryId);
+	}
+
+	@Override
+	public List<GoodsCombinHaoHuo> queryHaohuoByIndex() throws Exception {
+		return goodsCombinHaohuoMapper.queryHaohuoByIndex();
+	}
+
+	@Override
+	public List<IndexHaohuoGoodsVo> queryHaohuoAndGoodsByIndex()
+			throws Exception {
+		return goodsCombinHaohuoMapper.queryHaohuoAndGoodsByIndex();
+	}
+
+	@Override
+	public CategoryVo queryById(String sgId) throws Exception {
+		return subMallGoodsClassMapper.queryById(sgId);
+	}
+
+	@Override
+	public List<Goods> queryGoodsBySmGcId(String smGcId) throws Exception {
+		return subMallGoodsClassMapper.queryGoodsBySmGcId(smGcId);
+	}
+
+	@Override
+	public List<CategoryVo> queryByPager(Pager pager) throws Exception {
+		return subMallGoodsClassMapper.queryByPager(pager);
+	}
+
+	@Override
+	public List<GoodsClass> queryGoodsClassNoInSubMall(String subMallId)
+			throws Exception {
+		return subMallGoodsClassMapper.queryGoodsClassNoInSubMall(subMallId);
+	}
+
+	@Override
+	public List<GoodsClass> queryGoodsClassNoInSubGoodsClass(String smGcId)
+			throws Exception {
+		return subMallGoodsClassMapper.queryGoodsClassNoInSubGoodsClass(smGcId);
+	}
+
+	@Override
+	public int saveSubMallGoodsClass(SubMallGoodsClass subMallGoodsClass)
+			throws Exception {
+		return subMallGoodsClassMapper.insertSubMallGoodsClass(subMallGoodsClass);
+	}
+
+	@Override
+	public void deleteById(String smGcId) throws Exception {
+		subMallGoodsClassMapper.deleteById(smGcId);
+		subMallGoodsClassMapper.deleteAreaCategoryBySmGcId(smGcId);
+		subMallGoodsClassMapper.deleteSubCategoryBySmGcId(smGcId);
+	}
+
+	@Override
+	public List<SubMall> querySubMallByPager(Pager pager) throws Exception {
+		
+		return subMallGoodsClassMapper.querySubMallByPager(pager);
+	}
+
+}

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.leimingtech.service.module.member.dao.mapper.MemberGradeMapper">
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.MemberGrade">
+        <result column="grade_id" property="gradeId" jdbcType="VARCHAR"/>
+        <result column="grade_name" property="gradeName" jdbcType="VARCHAR"/>
+        <result column="integration" property="integration" jdbcType="INTEGER"/>
+        <result column="grade_img" property="gradeImg" jdbcType="VARCHAR"/>
+        <result column="preferential" property="preferential" jdbcType="INTEGER"/>
+        <result column="is_default" property="isDefault" jdbcType="INTEGER"/>
+        <result column="deadline" property="deadline" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		smg.grade_id, smg.grade_name, smg.integration, smg.grade_img, smg.preferential, smg.is_default,smg.deadline
+	</sql>
+
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition.gradeName != null and condition.gradeName != '' ">
+                and smg.grade_name like
+                <if test="dbName == 'oracle'">'%'||#{condition.gradeName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.gradeName}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%',#{condition.gradeName},'%' )</if>
+            </if>
+        </where>
+    </sql>
+
+    <sql id="whereStatement2">
+        <where>
+            1 = 1
+            <if test="gradeName != null and gradeName != '' ">
+                and smg.grade_name like
+                <if test="dbName == 'oracle'">'%'||#{gradeName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{gradeName}+'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%',#{gradeName},'%' )</if>
+            </if>
+        </where>
+    </sql>
+
+    <!-- 查询默认的会员等级 -->
+    <select id="findDefaultGrade" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_member_grade smg where smg.is_default = 1
+    </select>
+
+    <!-- 查询所有的会员等级 -->
+    <select id="findAllGrade" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_member_grade smg  ORDER BY integration ASC
+    </select>
+
+    <!-- 分页查询count -->
+    <select id="findMemberGradeCount" resultType="int" parameterType="com.leimingtech.core.entity.base.MemberGrade">
+        select count(1) from shop_member_grade smg
+        <include refid="whereStatement2"/>
+    </select>
+
+    <!-- 分页查询List -->
+    <select id="findMemberGradePageList" resultMap="BaseResultMap"
+            parameterType="com.leimingtech.service.utils.page.Pager">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_member_grade smg
+        <include refid="whereStatement"/>
+        ORDER BY integration ASC
+    </select>
+
+    <!-- 根据ID查询实体 -->
+    <select id="findMembeGraderById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_member_grade smg where smg.grade_id = #{gradeId,jdbcType=INTEGER}
+    </select>
+
+    <!-- 保存实体 -->
+    <insert id="save" parameterType="com.leimingtech.core.entity.base.MemberGrade">
+        insert into shop_member_grade
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gradeId != null">
+                grade_id,
+            </if>
+
+            <if test="gradeName != null">
+                grade_name,
+            </if>
+            <if test="integration != null">
+                integration,
+            </if>
+            <if test="gradeImg != null">
+                grade_img,
+            </if>
+            <if test="preferential != null">
+                preferential,
+            </if>
+            <if test="isDefault != null">
+                is_default,
+            </if>
+            <if test="deadline != null">
+                deadline,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gradeId != null">
+                #{gradeId},
+            </if>
+
+            <if test="gradeName != null">
+                #{gradeName},
+            </if>
+            <if test="integration != null">
+                #{integration},
+            </if>
+            <if test="gradeImg != null">
+                #{gradeImg},
+            </if>
+            <if test="preferential != null">
+                #{preferential},
+            </if>
+            <if test="isDefault != null">
+                #{isDefault},
+            </if>
+            <if test="deadline != null">
+                #{deadline},
+            </if>
+        </trim>
+    </insert>
+
+
+    <!-- 根据ID修改数据 -->
+    <update id="update" parameterType="com.leimingtech.core.entity.base.MemberGrade">
+        update shop_member_grade
+        <set>
+            <if test="gradeName != null and gradeName != ''">
+                grade_name = #{gradeName},
+            </if>
+            <if test="integration != null">
+                integration = #{integration},
+            </if>
+            <if test="gradeImg != '' and gradeImg != null ">
+                grade_img = #{gradeImg},
+            </if>
+            <if test="preferential != null">
+                preferential = #{preferential},
+            </if>
+            <if test="isDefault != null">
+                is_default = #{isDefault},
+            </if>
+            <if test="deadline != null">
+                deadline = #{deadline}
+            </if>
+            WHERE grade_id = #{gradeId}
+        </set>
+    </update>
+
+    <!-- 修改所有的默认值为0 -->
+    <update id="updateDefault" parameterType="java.lang.String">
+		update shop_member_grade set is_default = 0 where grade_id !=#{gradeId}
+	</update>
+
+    <!-- 根据ID删除数据 -->
+    <delete id="delete" parameterType="java.lang.String">
+		delete from shop_member_grade where grade_id = #{gradeId}
+	</delete>
+
+</mapper>

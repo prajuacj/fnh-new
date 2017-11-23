@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leimingtech.service.module.trade.dao.mapper.ShopBarterMapper">
+
+    <resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.ShopBarter">
+        <result column="barter_id" property="barterId" jdbcType="VARCHAR"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <result column="order_sn" property="orderSn" jdbcType="VARCHAR"/>
+        <result column="barter_sn" property="barterSn" jdbcType="VARCHAR"/>
+        <result column="store_id" property="storeId" jdbcType="VARCHAR"/>
+        <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
+        <result column="buyer_id" property="buyerId" jdbcType="VARCHAR"/>
+        <result column="buyer_name" property="buyerName" jdbcType="VARCHAR"/>
+        <result column="goods_id" property="goodsId" jdbcType="VARCHAR"/>
+        <result column="order_goods_id" property="orderGoodsId" jdbcType="VARCHAR"/>
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="goods_num" property="goodsNum" jdbcType="INTEGER"/>
+        <result column="goods_image" property="goodsImage" jdbcType="VARCHAR"/>
+        <result column="order_goods_type" property="orderGoodsType" jdbcType="INTEGER"/>
+        <result column="seller_state" property="sellerState" jdbcType="INTEGER"/>
+        <result column="order_lock" property="orderLock" jdbcType="INTEGER"/>
+        <result column="goods_state" property="goodsState" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
+        <result column="seller_time" property="sellerTime" jdbcType="BIGINT"/>
+        <result column="reason_id" property="reasonId" jdbcType="VARCHAR"/>
+        <result column="reason_info" property="reasonInfo" jdbcType="VARCHAR"/>
+        <result column="pic_info" property="picInfo" jdbcType="VARCHAR"/>
+        <result column="buyer_message" property="buyerMessage" jdbcType="VARCHAR"/>
+        <result column="seller_message" property="sellerMessage" jdbcType="VARCHAR"/>
+        <result column="buyer_express_id" property="buyerExpressId" jdbcType="VARCHAR"/>
+        <result column="buyer_invoice_no" property="buyerInvoiceNo" jdbcType="VARCHAR"/>
+        <result column="buyer_express_name" property="buyerExpressName" jdbcType="VARCHAR"/>
+        <result column="buyer_ship_time" property="buyerShipTime" jdbcType="BIGINT"/>
+        <result column="buyer_delay_time" property="buyerDelayTime" jdbcType="BIGINT"/>
+        <result column="buyer_receive_time" property="buyerReceiveTime" jdbcType="BIGINT"/>
+        <result column="buyer_receive_message" property="buyerReceiveMessage" jdbcType="VARCHAR"/>
+        <result column="seller_express_id" property="sellerExpressId" jdbcType="VARCHAR"/>
+        <result column="seller_invoice_no" property="sellerInvoiceNo" jdbcType="VARCHAR"/>
+        <result column="seller_express_name" property="sellerExpressName" jdbcType="VARCHAR"/>
+        <result column="seller_ship_time" property="sellerShipTime" jdbcType="BIGINT"/>
+        <result column="seller_delay_time" property="sellerDelayTime" jdbcType="BIGINT"/>
+        <result column="seller_receive_time" property="sellerReceiveTime" jdbcType="BIGINT"/>
+        <result column="seller_receive_message" property="sellerReceiveMessage" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="BarterDetailVo" type="com.leimingtech.core.entity.vo.BarterDetailVo" extends="BaseResultMap">
+        <collection property="orderDaddress" ofType="com.leimingtech.core.entity.base.OrderDaddress"
+                    column="order_id" javaType="com.leimingtech.core.entity.base.OrderDaddress"
+                    select="com.leimingtech.service.module.trade.dao.mapper.OrderDaddressMapper.findOrderDaddressByOrderId">
+        </collection>
+        <collection property="shopBarterLogList" ofType="com.leimingtech.core.entity.base.ShopBarterLog"
+                    column="barter_id" javaType="arraylist"
+                    select="com.leimingtech.service.module.trade.dao.mapper.ShopBarterLogMapper.findListByBatterId">
+        </collection>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		barter_id,
+		order_id,
+		order_sn,
+		barter_sn,
+		store_id,
+		store_name,
+		buyer_id,
+		buyer_name,
+		goods_id,
+		order_goods_id,
+		goods_name,
+		goods_num,
+		goods_image,
+		order_goods_type,
+		seller_state,
+		order_lock,
+		goods_state,
+		create_time,
+		seller_time,
+		reason_id,
+		reason_info,
+		pic_info,
+		buyer_message,
+		seller_message,
+		buyer_express_id,
+		buyer_invoice_no,
+		buyer_express_name,
+		buyer_ship_time,
+		buyer_delay_time,
+		buyer_receive_time,
+		buyer_receive_message,
+		seller_express_id,
+		seller_invoice_no,
+		seller_express_name,
+		seller_ship_time,
+		seller_delay_time,
+		seller_receive_time,
+		seller_receive_message
+	</sql>
+
+    <sql id="whereStatement">
+        <where>
+            1 = 1
+            <if test="condition.orderSn !=null and condition.orderSn != '' ">
+                and order_sn like
+                <if test="dbName == 'oracle'">'%'||#{condition.orderSn}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.orderSn}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{condition.orderSn},'%')</if>
+            </if>
+            <if test="condition.barterSn != null and condition.barterSn != '' ">
+                and barter_sn like
+                <if test="dbName == 'oracle'">'%'||#{condition.barterSn}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.barterSn}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{condition.barterSn},'%')</if>
+            </if>
+            <if test="condition.storeName != null and condition.storeName != '' ">
+                and store_name like
+                <if test="dbName == 'oracle'">'%'||#{condition.storeName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.storeName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{condition.storeName},'%')</if>
+            </if>
+            <if test="condition.buyerName != null and condition.buyerName != '' ">
+                and buyer_name like
+                <if test="dbName == 'oracle'">'%'||#{condition.buyerName}||'%'</if>
+                <if test="dbName == 'mssql'">'%'+#{condition.buyerName}+'%'</if>
+                <if test="dbName == 'mysql'">concat('%',#{condition.buyerName},'%')</if>
+            </if>
+            <if test="condition.buyerId != null and condition.buyerId != ''">
+                and buyer_id = #{condition.buyerId}
+            </if>
+            <if test="condition.storeId != null and condition.storeId != ''">
+                and store_id = #{condition.storeId}
+            </if>
+            <if test="condition.sellerState != null">
+                and seller_state = #{condition.sellerState}
+            </if>
+            <if test="condition.goodsState != null">
+                and goods_state = #{condition.goodsState}
+            </if>
+            <if test="condition.startTime != null and condition.startTime != '' ">
+                and create_time &gt;= #{condition.startTime}
+            </if>
+            <if test="condition.endTime != null and condition.endTime != '' ">
+                and create_time &lt; #{condition.endTime}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="findShopBarterPagerList" resultMap="BaseResultMap"
+            parameterType="com.leimingtech.service.utils.page.Pager">
+        select * from shop_barter
+        <include refid="whereStatement"/>
+        order by create_time desc
+    </select>
+
+    <select id="findShopBarterAllList" resultMap="BaseResultMap"
+            parameterType="com.leimingtech.core.entity.base.ShopBarter">
+        SELECT
+        <include refid="Base_Column_List"/>
+        from shop_barter
+    </select>
+
+    <select id="findShopBarterByBarterId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_barter c where barter_id = #{barterId}
+    </select>
+
+    <delete id="deleteShopBarterByBarterId" parameterType="java.lang.String">
+		delete from
+		shop_barter where barter_id = #{barterId}
+	</delete>
+
+    <insert id="saveShopBarter" parameterType="com.leimingtech.core.entity.base.ShopBarter">
+        insert into shop_barter
+
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="barterId != null and barterId != ''">
+                barter_id,
+            </if>
+            <if test="orderId != null and orderId != ''">
+                order_id,
+            </if>
+            <if test="orderSn != null and orderSn != ''">
+                order_sn,
+            </if>
+            <if test="barterSn != null and barterSn != ''">
+                barter_sn,
+            </if>
+            <if test="storeId != null and storeId != ''">
+                store_id,
+            </if>
+            <if test="storeName != null and storeName != ''">
+                store_name,
+            </if>
+            <if test="buyerId != null and buyerId != ''">
+                buyer_id,
+            </if>
+            <if test="buyerName != null and buyerName != ''">
+                buyer_name,
+            </if>
+            <if test="goodsId != null and goodsId != ''">
+                goods_id,
+            </if>
+            <if test="orderGoodsId != null and orderGoodsId != ''">
+                order_goods_id,
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                goods_name,
+            </if>
+            <if test="goodsNum != null ">
+                goods_num,
+            </if>
+            <if test="goodsImage != null and goodsImage != ''">
+                goods_image,
+            </if>
+            <if test="orderGoodsType != null ">
+                order_goods_type,
+            </if>
+            <if test="sellerState != null ">
+                seller_state,
+            </if>
+            <if test="orderLock != null ">
+                order_lock,
+            </if>
+            <if test="goodsState != null ">
+                goods_state,
+            </if>
+            <if test="createTime != null ">
+                create_time,
+            </if>
+            <if test="sellerTime != null ">
+                seller_time,
+            </if>
+            <if test="reasonId != null and reasonId != ''">
+                reason_id,
+            </if>
+            <if test="reasonInfo != null and reasonInfo != ''">
+                reason_info,
+            </if>
+            <if test="picInfo != null and picInfo != ''">
+                pic_info,
+            </if>
+            <if test="buyerMessage != null and buyerMessage != ''">
+                buyer_message,
+            </if>
+            <if test="sellerMessage != null and sellerMessage != ''">
+                seller_message,
+            </if>
+            <if test="buyerExpressId != null and buyerExpressId != ''">
+                buyer_express_id,
+            </if>
+            <if test="buyerInvoiceNo != null and buyerInvoiceNo != ''">
+                buyer_invoice_no,
+            </if>
+            <if test="buyerExpressName != null and buyerExpressName != ''">
+                buyer_express_name,
+            </if>
+            <if test="buyerShipTime != null ">
+                buyer_ship_time,
+            </if>
+            <if test="buyerDelayTime != null ">
+                buyer_delay_time,
+            </if>
+            <if test="buyerReceiveTime != null ">
+                buyer_receive_time,
+            </if>
+            <if test="buyerReceiveMessage != null and buyerReceiveMessage != ''">
+                buyer_receive_message,
+            </if>
+            <if test="sellerExpressId != null and sellerExpressId != ''">
+                seller_express_id,
+            </if>
+            <if test="sellerInvoiceNo != null and sellerInvoiceNo != ''">
+                seller_invoice_no,
+            </if>
+            <if test="sellerExpressName != null and sellerExpressName != ''">
+                seller_express_name,
+            </if>
+            <if test="sellerShipTime != null ">
+                seller_ship_time,
+            </if>
+            <if test="sellerDelayTime != null ">
+                seller_delay_time,
+            </if>
+            <if test="sellerReceiveTime != null ">
+                seller_receive_time,
+            </if>
+            <if test="sellerReceiveMessage != null and sellerReceiveMessage != ''">
+                seller_receive_message,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="barterId != null and barterId != ''">
+                #{barterId},
+            </if>
+            <if test="orderId != null and orderId != ''">
+                #{orderId},
+            </if>
+            <if test="orderSn != null and orderSn != ''">
+                #{orderSn},
+            </if>
+            <if test="barterSn != null and barterSn != ''">
+                #{barterSn},
+            </if>
+            <if test="storeId != null and storeId != ''">
+                #{storeId},
+            </if>
+            <if test="storeName != null and storeName != ''">
+                #{storeName},
+            </if>
+            <if test="buyerId != null and buyerId != ''">
+                #{buyerId},
+            </if>
+            <if test="buyerName != null and buyerName != ''">
+                #{buyerName},
+            </if>
+            <if test="goodsId != null and goodsId != ''">
+                #{goodsId},
+            </if>
+            <if test="orderGoodsId != null and orderGoodsId != ''">
+                #{orderGoodsId},
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                #{goodsName},
+            </if>
+            <if test="goodsNum != null ">
+                #{goodsNum},
+            </if>
+            <if test="goodsImage != null and goodsImage != ''">
+                #{goodsImage},
+            </if>
+            <if test="orderGoodsType != null ">
+                #{orderGoodsType},
+            </if>
+            <if test="sellerState != null ">
+                #{sellerState},
+            </if>
+            <if test="orderLock != null ">
+                #{orderLock},
+            </if>
+            <if test="goodsState != null ">
+                #{goodsState},
+            </if>
+            <if test="createTime != null ">
+                #{createTime},
+            </if>
+            <if test="sellerTime != null ">
+                #{sellerTime},
+            </if>
+            <if test="reasonId != null and reasonId != ''">
+                #{reasonId},
+            </if>
+            <if test="reasonInfo != null and reasonInfo != ''">
+                #{reasonInfo},
+            </if>
+            <if test="picInfo != null and picInfo != ''">
+                #{picInfo},
+            </if>
+            <if test="buyerMessage != null and buyerMessage != ''">
+                #{buyerMessage},
+            </if>
+            <if test="sellerMessage != null and sellerMessage != ''">
+                #{sellerMessage},
+            </if>
+            <if test="buyerExpressId != null and buyerExpressId != ''">
+                #{buyerExpressId},
+            </if>
+            <if test="buyerInvoiceNo != null and buyerInvoiceNo != ''">
+                #{buyerInvoiceNo},
+            </if>
+            <if test="buyerExpressName != null and buyerExpressName != ''">
+                #{buyerExpressName},
+            </if>
+            <if test="buyerShipTime != null ">
+                #{buyerShipTime},
+            </if>
+            <if test="buyerDelayTime != null ">
+                #{buyerDelayTime},
+            </if>
+            <if test="buyerReceiveTime != null ">
+                #{buyerReceiveTime},
+            </if>
+            <if test="buyerReceiveMessage != null and buyerReceiveMessage != ''">
+                #{buyerReceiveMessage},
+            </if>
+            <if test="sellerExpressId != null and sellerExpressId != ''">
+                #{sellerExpressId},
+            </if>
+            <if test="sellerInvoiceNo != null and sellerInvoiceNo != ''">
+                #{sellerInvoiceNo},
+            </if>
+            <if test="sellerExpressName != null and sellerExpressName != ''">
+                #{sellerExpressName},
+            </if>
+            <if test="sellerShipTime != null ">
+                #{sellerShipTime},
+            </if>
+            <if test="sellerDelayTime != null ">
+                #{sellerDelayTime},
+            </if>
+            <if test="sellerReceiveTime != null ">
+                #{sellerReceiveTime},
+            </if>
+            <if test="sellerReceiveMessage != null and sellerReceiveMessage != ''">
+                #{sellerReceiveMessage},
+            </if>
+        </trim>
+
+    </insert>
+
+    <update id="updateShopBarter" parameterType="com.leimingtech.core.entity.base.ShopBarter">
+
+        update shop_barter
+        <set>
+            <if test="barterId != null and barterId != ''">
+                barter_id = #{barterId},
+            </if>
+            <if test="orderId != null and orderId != ''">
+                order_id = #{orderId},
+            </if>
+            <if test="orderSn != null and orderSn != ''">
+                order_sn = #{orderSn},
+            </if>
+            <if test="barterSn != null and barterSn != ''">
+                barter_sn = #{barterSn},
+            </if>
+            <if test="storeId != null and storeId != ''">
+                store_id = #{storeId},
+            </if>
+            <if test="storeName != null and storeName != ''">
+                store_name = #{storeName},
+            </if>
+            <if test="buyerId != null and buyerId != ''">
+                buyer_id = #{buyerId},
+            </if>
+            <if test="buyerName != null and buyerName != ''">
+                buyer_name = #{buyerName},
+            </if>
+            <if test="goodsId != null and goodsId != ''">
+                goods_id = #{goodsId},
+            </if>
+            <if test="orderGoodsId != null and orderGoodsId != ''">
+                order_goods_id = #{orderGoodsId},
+            </if>
+            <if test="goodsName != null and goodsName != ''">
+                goods_name = #{goodsName},
+            </if>
+            <if test="goodsNum != null ">
+                goods_num = #{goodsNum},
+            </if>
+            <if test="goodsImage != null and goodsImage != ''">
+                goods_image = #{goodsImage},
+            </if>
+            <if test="orderGoodsType != null ">
+                order_goods_type = #{orderGoodsType},
+            </if>
+            <if test="sellerState != null ">
+                seller_state = #{sellerState},
+            </if>
+            <if test="orderLock != null ">
+                order_lock = #{orderLock},
+            </if>
+            <if test="goodsState != null ">
+                goods_state = #{goodsState},
+            </if>
+            <if test="createTime != null ">
+                create_time = #{createTime},
+            </if>
+            <if test="sellerTime != null ">
+                seller_time = #{sellerTime},
+            </if>
+            <if test="reasonId != null and reasonId != ''">
+                reason_id = #{reasonId},
+            </if>
+            <if test="reasonInfo != null and reasonInfo != ''">
+                reason_info = #{reasonInfo},
+            </if>
+            <if test="picInfo != null and picInfo != ''">
+                pic_info = #{picInfo},
+            </if>
+            <if test="buyerMessage != null and buyerMessage != ''">
+                buyer_message = #{buyerMessage},
+            </if>
+            <if test="sellerMessage != null and sellerMessage != ''">
+                seller_message = #{sellerMessage},
+            </if>
+            <if test="buyerExpressId != null and buyerExpressId != ''">
+                buyer_express_id = #{buyerExpressId},
+            </if>
+            <if test="buyerInvoiceNo != null and buyerInvoiceNo != ''">
+                buyer_invoice_no = #{buyerInvoiceNo},
+            </if>
+            <if test="buyerExpressName != null and buyerExpressName != ''">
+                buyer_express_name = #{buyerExpressName},
+            </if>
+            <if test="buyerShipTime != null ">
+                buyer_ship_time = #{buyerShipTime},
+            </if>
+            <if test="buyerDelayTime != null ">
+                buyer_delay_time = #{buyerDelayTime},
+            </if>
+            <if test="buyerReceiveTime != null ">
+                buyer_receive_time = #{buyerReceiveTime},
+            </if>
+            <if test="buyerReceiveMessage != null and buyerReceiveMessage != ''">
+                buyer_receive_message = #{buyerReceiveMessage},
+            </if>
+            <if test="sellerExpressId != null and sellerExpressId != ''">
+                seller_express_id = #{sellerExpressId},
+            </if>
+            <if test="sellerInvoiceNo != null and sellerInvoiceNo != ''">
+                seller_invoice_no = #{sellerInvoiceNo},
+            </if>
+            <if test="sellerExpressName != null and sellerExpressName != ''">
+                seller_express_name = #{sellerExpressName},
+            </if>
+            <if test="sellerShipTime != null ">
+                seller_ship_time = #{sellerShipTime},
+            </if>
+            <if test="sellerDelayTime != null ">
+                seller_delay_time = #{sellerDelayTime},
+            </if>
+            <if test="sellerReceiveTime != null ">
+                seller_receive_time = #{sellerReceiveTime},
+            </if>
+            <if test="sellerReceiveMessage != null and sellerReceiveMessage != ''">
+                seller_receive_message = #{sellerReceiveMessage},
+            </if>
+        </set>
+        WHERE barter_id = #{barterId}
+    </update>
+
+    <!-- 查询换货详情 -->
+    <select id="findBarterDetail" parameterType="com.leimingtech.core.entity.base.ShopBarter"
+            resultMap="BarterDetailVo">
+        select
+        <include refid="Base_Column_List"/>
+        from shop_barter where barter_id = #{barterId}
+        <if test="buyerId != null and buyerId != ''">
+            and buyer_id = #{buyerId}
+        </if>
+        <if test="storeId != null and storeId != ''">
+            and store_id = #{storeId}
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.leimingtech.service.module.shopmessage.dao.mapper.ShopMessageznMapper">
+	
+	<resultMap id="BaseResultMap" type="com.leimingtech.core.entity.base.ShopMessagezn">
+		<result column="ms_id" property="msId" jdbcType="VARCHAR" />
+		<result column="send_id" property="sendId" jdbcType="VARCHAR" />
+		<result column="send_name" property="sendName" jdbcType="VARCHAR" />
+		<result column="receive_id" property="receiveId" jdbcType="VARCHAR" />
+		<result column="message_id" property="messageId" jdbcType="VARCHAR" />
+		<result column="statue" property="statue" jdbcType="INTEGER" />
+		<result column="receive_name" property="receiveName" jdbcType="VARCHAR" />
+		<result column="is_del" property="isDel" jdbcType="INTEGER" />
+	</resultMap>
+
+	<resultMap id="BaseResultMap2" type="com.leimingtech.core.entity.base.ShopMessagezn">
+		<result column="ms_id" property="msId" jdbcType="VARCHAR" />
+		<result column="send_id" property="sendId" jdbcType="VARCHAR" />
+		<result column="send_name" property="sendName" jdbcType="VARCHAR" />
+		<result column="receive_id" property="receiveId" jdbcType="VARCHAR" />
+		<result column="message_id" property="messageId" jdbcType="VARCHAR" />
+		<result column="statue" property="statue" jdbcType="INTEGER" />
+		<result column="receive_name" property="receiveName" jdbcType="VARCHAR" />
+		<result column="message_title" property="messageTitle" jdbcType="VARCHAR" />
+		<result column="shop_message" property="shopMessage" jdbcType="VARCHAR" />
+		<result column="message_type" property="messageType" jdbcType="INTEGER" />
+		<result column="sendtime" property="sendtime" jdbcType="BIGINT" />
+		<result column="is_del" property="isDel" jdbcType="INTEGER" />
+	</resultMap>
+    
+	<sql id="Base_Column_List">
+		ms_id,
+		send_id,
+		send_name,
+		receive_id,
+		message_id,
+		statue,
+		receive_name,
+		is_del
+	</sql>
+	
+	<sql id="whereStatement">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+				<if test="condition.messageId != null and condition.messageId != ''">
+					AND c.message_id = #{condition.messageId}
+				</if>
+				<if test="condition.receiveName != null and condition.receiveName != ''">
+					AND c.receive_name like
+					<if test="dbName == 'mysql'">concat('%',#{condition.receiveName},'%')</if>
+				</if>
+			</if>
+		</where>
+	</sql>
+
+
+	<sql id="whereStatement2">
+		<where>
+			1 = 1
+			<if test="condition !=null">
+				<if test="condition.messageId != null and condition.messageId != ''">
+					AND c.message_id = #{condition.messageId}
+				</if>
+				<if test="condition.receiveName != null and condition.receiveName != ''">
+					AND c.receive_name like
+					<if test="dbName == 'mysql'">concat('%',#{condition.receiveName},'%')</if>
+				</if>
+				<if test="condition.receiveId != null and condition.receiveId !=''">
+					AND c.receive_id = #{condition.receiveId}
+				</if>
+				<if test="condition.messageTitle != null and condition.messageTitle != ''">
+					AND smt.message_title like
+					<if test="dbName == 'mysql'">
+						concat('%',#{condition.messageTitle},'%')
+				    </if>
+				</if>
+				<if test="condition.messageType != null">
+					AND smt.message_type= #{condition.messageType}
+				</if>
+			</if>
+		</where>
+	</sql>
+	
+	<select id="findShopMessageznPagerList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.service.utils.page.Pager">
+		select c.* from shop_messagezn c
+		<include refid="whereStatement" />
+	</select>
+
+	<select id="findShopMessageznPagerList2" resultMap="BaseResultMap2" parameterType="com.leimingtech.service.utils.page.Pager">
+		select c.*,smt.message_title,smt.shop_message,smt.message_type,smt.sendtime from shop_messagezn c
+		left join shop_message_text smt on c.message_id=smt.text_id
+		<include refid="whereStatement2" />
+		order BY smt.sendtime desc
+	</select>
+
+	<select id="findShopMessageznAllList" resultMap="BaseResultMap"
+		parameterType="com.leimingtech.core.entity.base.ShopMessagezn">
+		SELECT
+		<include refid="Base_Column_List" />
+		from shop_messagezn c
+	</select>
+
+	<select id="findcount"  resultType="Integer" parameterType="com.leimingtech.core.entity.base.ShopMessagezn">
+		SELECT count(*) from  shop_messagezn where 1=1
+		<if test="receiveId != null and receiveId != ''">
+			AND receive_id = #{receiveId}
+		</if>
+		<if test="statue != null">
+			AND statue = #{statue}
+		</if>
+	</select>
+	
+	<select id="findShopMessageznByMsId" resultMap="BaseResultMap2" parameterType="java.lang.String">
+		select c.*,smt.message_title,smt.shop_message,smt.message_type,smt.sendtime from shop_messagezn c
+		left join shop_message_text smt on c.message_id=smt.text_id
+		where c.ms_id = #{msId}
+	</select>
+
+	<delete id="deleteShopMessageznByMsId" parameterType="java.lang.String">
+		delete from
+		shop_messagezn where ms_id = #{msId}
+	</delete>
+	
+	<delete id="deleteShopMessageznByMessage_id" parameterType="java.lang.String">
+		delete from
+		shop_messagezn where message_id = #{message_id}
+	</delete>
+	
+	<insert id="saveShopMessagezn" parameterType="com.leimingtech.core.entity.base.ShopMessagezn">
+		insert into shop_messagezn
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+
+			<if test="msId != null and msId != ''">
+			ms_id,
+			</if>
+			<if test="sendId != null and sendId != ''">
+			send_id,
+			</if>
+			<if test="sendName != null and sendName != ''">
+			send_name,
+			</if>
+			<if test="receiveId != null and receiveId != ''">
+			receive_id,
+			</if>
+			<if test="messageId != null and messageId != ''">
+			message_id,
+			</if>
+			<if test="statue != null ">
+			statue,
+			</if>
+			<if test="receiveName != null and receiveName != ''">
+			receive_name,
+			</if>
+			<if test="isDel != null ">
+			is_del,
+			</if>
+		</trim>
+
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+
+			<if test="msId != null and msId != ''">
+				#{msId},
+			</if>
+			<if test="sendId != null and sendId != ''">
+				#{sendId},
+			</if>
+			<if test="sendName != null and sendName != ''">
+				#{sendName},
+			</if>
+			<if test="receiveId != null and receiveId != ''">
+				#{receiveId},
+			</if>
+			<if test="messageId != null and messageId != ''">
+				#{messageId},
+			</if>
+			<if test="statue != null ">
+				#{statue},
+			</if>
+			<if test="receiveName != null and receiveName != ''">
+				#{receiveName},
+			</if>
+			<if test="isDel != null ">
+				#{isDel},
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateShopMessagezn" parameterType="com.leimingtech.core.entity.base.ShopMessagezn">
+		update shop_messagezn
+		<set>
+			<if test="msId != null and msId != ''">
+				ms_id = #{msId},
+			</if>
+			<if test="sendId != null and sendId != ''">
+				send_id = #{sendId},
+			</if>
+			<if test="sendName != null and sendName != ''">
+				send_name = #{sendName},
+			</if>
+			<if test="receiveId != null and receiveId != ''">
+				receive_id = #{receiveId},
+			</if>
+			<if test="messageId != null and messageId != ''">
+				message_id = #{messageId},
+			</if>
+			<if test="statue != null ">
+				statue = #{statue},
+			</if>
+			<if test="receiveName != null and receiveName != ''">
+				receive_name = #{receiveName},
+			</if>
+			<if test="isDel != null ">
+				is_del = #{isDel},
+			</if>
+		</set>
+
+		WHERE ms_id = #{msId}
+
+	</update>
+	
+</mapper>
